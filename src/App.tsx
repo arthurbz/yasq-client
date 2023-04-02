@@ -1,35 +1,47 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import YouTube, { YouTubeEvent } from "react-youtube"
 
 function App() {
-  const [count, setCount] = useState(0)
+    let player: any | null
 
-  return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
+    const onReady = (event: YouTubeEvent) => {
+        console.log("ready")
+        player = event.target
+    }
+
+    const play = () => {
+        console.log("play")
+        player?.playVideo()
+    }
+
+    const pause = () => {
+        console.log("pause")
+        player?.pauseVideo()
+    }
+
+    const seekTo = () => {
+        player?.seekTo(60)
+    }
+
+    return (
+        <div className="App">
+            <button onClick={play}>
+                play
+            </button>
+
+            <button onClick={pause}>
+                pause
+            </button>
+
+            <button onClick={seekTo}>
+                seek to 1min
+            </button>
+
+            <YouTube
+                videoId={"hC8CH0Z3L54"}
+                onReady={onReady}
+            />
+        </div>
+    )
 }
 
 export default App
