@@ -6,7 +6,7 @@ function App() {
         <div style={{ display: "flex", width: "100%", height: "100vh", justifyContent: "center", alignItems: "center" }}>
             <div>
                 <SearchBar />
-                <YouTubePlayer />
+                {/* <YouTubePlayer /> */}
             </div>
         </div>
     )
