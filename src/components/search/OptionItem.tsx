@@ -6,16 +6,16 @@ interface OptionItemProps {
 }
 
 function OptionItem(props: OptionItemProps) {
-    const { author, title, thumbnail } = props.searchItemOption
+    const { artist, name, thumbnail } = props.searchItemOption
 
     return (
         <Space style={{ paddingTop: 6, paddingBottom: 6 }}>
             <Image
                 src={thumbnail}
-                alt={title}
+                alt={name}
                 preview={false}
-                width={96}
-                height={96}
+                width={64}
+                height={64}
                 style={{
                     objectFit: "cover",
                     borderRadius: 4
@@ -23,11 +23,11 @@ function OptionItem(props: OptionItemProps) {
             />
             <Col>
                 <Typography.Title level={5} style={{ margin: 0 }}>
-                    {title}
+                    {name}
                 </Typography.Title>
 
                 <Typography.Text style={{ margin: 0 }}>
-                    {author}
+                    {artist}
                 </Typography.Text>
             </Col>
         </Space>
