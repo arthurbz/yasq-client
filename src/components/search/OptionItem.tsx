@@ -1,12 +1,12 @@
 import { Space, Col, Typography, Image } from "antd"
-import { SearchItemOption } from "../../types/SearchItemOption"
+import { Song } from "../../types/Song"
 
 interface OptionItemProps {
-    searchItemOption: SearchItemOption
+    song: Song
 }
 
 function OptionItem(props: OptionItemProps) {
-    const { artist, name, thumbnail } = props.searchItemOption
+    const { artist, name, thumbnail } = props.song
 
     return (
         <Space style={{ paddingTop: 6, paddingBottom: 6 }}>

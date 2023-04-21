@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { AutoComplete, Input } from "antd"
 import { SearchOutlined } from "@ant-design/icons"
 import OptionItem from "./OptionItem"
-import { SearchItemOption } from "../../types/SearchItemOption"
+import { Song } from "../../types/Song"
 
 function SearchBar() {
     const [searchQuery, setSearchQuery] = useState("")
@@ -39,10 +39,10 @@ function SearchBar() {
     }
 
     const createOptions = (searchResults: any[]) => {
-        const newOptions = searchResults.map((option: SearchItemOption) => {
+        const newOptions = searchResults.map((option: Song) => {
             return {
-                value: option.id,
-                label: <OptionItem searchItemOption={option} />
+                value: option.originId,
+                label: <OptionItem song={option} />
             }
         })
 
