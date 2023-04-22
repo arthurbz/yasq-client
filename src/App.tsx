@@ -1,14 +1,12 @@
-import YouTubePlayer from "./components/players/YouTubePlayer"
-import SearchBar from "./components/search/SearchBar"
+import { Layout } from "antd"
+import { RouterProvider } from "react-router-dom"
+import { router } from "./router/Router"
 
 function App() {
     return (
-        <div style={{ display: "flex", width: "100%", height: "100vh", justifyContent: "center", alignItems: "center" }}>
-            <div>
-                <SearchBar />
-                {/* <YouTubePlayer /> */}
-            </div>
-        </div>
+        <Layout style={{ width: "100vw", height: "100vh" }}>
+            <RouterProvider router={router} />
+        </Layout>
     )
 }
 
