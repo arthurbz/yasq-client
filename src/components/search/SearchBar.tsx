@@ -1,77 +1,67 @@
-import { useState, useEffect } from "react"
-import { AutoComplete, Input } from "antd"
-import { SearchOutlined } from "@ant-design/icons"
+import { useEffect, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
+import { AutoComplete, Input, App } from "antd"
+import { SearchOutlined, LoadingOutlined } from "@ant-design/icons"
+import { AxiosResponse, AxiosError } from "axios"
+import { axios } from "../../plugins/AxiosInstance"
 import OptionItem from "./OptionItem"
 import { Song } from "../../types/Song"
 
 function SearchBar() {
     const [searchQuery, setSearchQuery] = useState("")
-    const [loading, setLoading] = useState(false)
-    const [options, setOptions] = useState<any[]>()
-    const controller = new AbortController()
+    const [inputValue, setInputValue] = useState("")
+    const [options, setOptions] = useState<{ value: string, label: JSX.Element }[]>([])
+    const { message } = App.useApp()
+
+    const { isFetching } = useQuery<AxiosResponse<Song[], any>, AxiosError<any, any>>({
+        queryKey: ["search", "youtube", "query", searchQuery],
+        enabled: !!searchQuery,
+        queryFn: () => axios.get(`/search/youtube?query=${searchQuery}`),
+        onSuccess: response => {
+            setOptions(response.data.map((song: Song) => {
+                return {
+                    value: song.originId,
+                    label: <OptionItem song={song} />
+                }
+            }))
+        },
+        onError: error => {
+            const errorMessage = error.response?.data?.errorMessage
+            message.error(errorMessage ?? "Unable to search any songs.")
+        },
+        cacheTime: 1000 * 60 * 15,
+        staleTime: 1000 * 60 * 15
+    })
 
     useEffect(() => {
-        if (!searchQuery)
-            return
+        const timeout = setTimeout(() => {
+            setSearchQuery(inputValue)
+        }, 500)
 
-        setLoading(true)
+        return () => clearTimeout(timeout)
+    }, [inputValue])
 
-        const searchTimeout = setTimeout(() => {
-            fetchSearchData(searchQuery)
-        }, 350)
-
-        return () => {
-            setLoading(false)
-            clearTimeout(searchTimeout)
-            controller.abort()
-        }
-    }, [searchQuery])
 
     const onChange = (value: string) => {
-        setSearchQuery(value)
+        setInputValue(value)
     }
 
     const onSelect = (value: string) => {
-        // TO-DO - Blur the AutoComplete component
-        setSearchQuery("")
-        setOptions(undefined)
+        setInputValue("")
         console.log(value)
-    }
-
-    const createOptions = (searchResults: any[]) => {
-        const newOptions = searchResults.map((option: Song) => {
-            return {
-                value: option.originId,
-                label: <OptionItem song={option} />
-            }
-        })
-
-        setOptions(newOptions)
-    }
-
-    const fetchSearchData = async (query: string) => {
-        console.log("Searching for:", query)
-        await fetch(`${import.meta.env.VITE_SERVER}/search/youtube?query=${query}`,
-            { method: "GET", signal: controller.signal })
-            .then(response => response.json())
-            .then(data => {
-                setLoading(false)
-                createOptions(data)
-            })
-            .catch(error => { return })
     }
 
     return (
         <AutoComplete
             style={{ width: 400 }}
             options={options}
-            value={searchQuery}
-            onChange={onChange}
+            value={inputValue}
             onSelect={onSelect}
+            onChange={onChange}
         >
             <Input
                 placeholder="Search"
-                prefix={<SearchOutlined />}
+                prefix={isFetching ? <LoadingOutlined spin /> : <SearchOutlined />}
                 size="large"
                 style={{ height: 48 }}
             />
