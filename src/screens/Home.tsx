@@ -1,8 +1,29 @@
-import { Layout, Button, Image, Input, Row, Col, Typography, Space } from "antd"
+import { Layout, Button, Image, Input, Row, Col, Typography, Space, Form } from "antd"
 const { Title, Text, Paragraph } = Typography
 import YasqLogo from "../assets/images/yasq-logo.svg"
+import { useMutation } from "@tanstack/react-query"
+import { axios } from "../plugins/AxiosInstance"
 
 function Home() {
+
+    const { mutate } = useMutation({
+        mutationKey: ["room", "create", "random"],
+        mutationFn: async (name: string) => {
+            return await axios.post("/room/create/random", { name }).then(response => response.data)
+        },
+        onSuccess: (data) => {
+            // TODO - WIP
+            console.log(data)
+        }
+    })
+
+    const submit = (formValues: { roomName?: string }) => {
+        const { roomName } = formValues
+
+        if (roomName)
+            mutate(roomName)
+    }
+
     return (
         <Layout style={{ margin: 16 }}>
             <Row style={{ alignItems: "center", gap: 8 }}>
@@ -32,20 +53,26 @@ function Home() {
                         Listen together now
                     </Text>
                 </Row>
+                <Form onFinish={submit}>
+                    <Space.Compact>
+                        <Form.Item name="roomName">
+                            <Input
+                                placeholder="Room Name"
+                                style={{ fontSize: "1.8em" }}
+                            />
+                        </Form.Item>
 
-                <Space.Compact>
-                    <Input
-                        placeholder="Room Name"
-                        style={{ fontSize: "1.8em" }}
-                    />
-
-                    <Button
-                        type="primary"
-                        style={{ fontSize: "1.8em", height: "100%", fontWeight: "bold" }}
-                    >
-                        Create
-                    </Button>
-                </Space.Compact>
+                        <Form.Item>
+                            <Button
+                                type="primary"
+                                style={{ fontSize: "1.8em", height: "100%", fontWeight: "bold" }}
+                                htmlType="submit"
+                            >
+                                Create
+                            </Button>
+                        </Form.Item>
+                    </Space.Compact>
+                </Form>
             </Col>
         </Layout>
     )
