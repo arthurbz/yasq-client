@@ -1,6 +1,6 @@
 import { Layout, Button, Image, Input, Row, Col, Typography, Space } from "antd"
 const { Title, Text, Paragraph } = Typography
-import YasqLogo from "../assets/yasq-logo.svg"
+import YasqLogo from "../assets/images/yasq-logo.svg"
 
 function Home() {
     return (
@@ -38,6 +38,7 @@ function Home() {
                         placeholder="Room Name"
                         style={{ fontSize: "1.8em" }}
                     />
+
                     <Button
                         type="primary"
                         style={{ fontSize: "1.8em", height: "100%", fontWeight: "bold" }}

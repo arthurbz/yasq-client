@@ -1,4 +1,5 @@
 :root {
+  font-family: "Inconsolata", sans-serif;
   font-weight: 400;
 
   font-synthesis: none;
@@ -6,6 +7,11 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+}
+
+@font-face {
+  font-family: "Inconsolata";
+  src: local("Inconsolata"), url("./assets/fonts/Inconsolata.ttf") format("truetype");
 }
 
 body {
