@@ -1,19 +1,28 @@
-import { Layout, Button, Image, Input, Row, Col, Typography, Space, Form } from "antd"
+import { App, Layout, Button, Image, Input, Row, Col, Typography, Space, Form } from "antd"
 const { Title, Text, Paragraph } = Typography
-import YasqLogo from "../assets/images/yasq-logo.svg"
+import { useNavigate } from "react-router-dom"
 import { useMutation } from "@tanstack/react-query"
 import { axios } from "../plugins/AxiosInstance"
+import YasqLogo from "../assets/images/yasq-logo.svg"
 
 function Home() {
-
+    const { notification } = App.useApp()
+    const navigate = useNavigate()
     const { mutate } = useMutation({
         mutationKey: ["room", "create", "random"],
-        mutationFn: async (name: string) => {
-            return await axios.post("/room/create/random", { name }).then(response => response.data)
-        },
+        mutationFn: async (name: string) => await axios.post("/room/create/random", { name }).then(response => response.data),
         onSuccess: (data) => {
-            // TODO - WIP
-            console.log(data)
+            const { roomId, userId } = data
+
+            if (!roomId || !userId) {
+                notification.error({ message: "We are sorry, but there was an error when trying to create your room." })
+                return
+            }
+
+            navigate(`/room/${roomId}`)
+        },
+        onError: () => {
+            notification.error({ message: "We are sorry, but there was an error when trying to create your room." })
         }
     })
 

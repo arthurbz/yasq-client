@@ -10,7 +10,7 @@ const router = createBrowserRouter([
         errorElement: <ErrorBoundary />
     },
     {
-        path: "/room",
+        path: "/room/:id",
         element: <Room />,
         errorElement: <ErrorBoundary />
     },
