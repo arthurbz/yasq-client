@@ -1,5 +1,5 @@
 :root {
-  font-family: "Inconsolata", sans-serif;
+  font-family: "Nunito", sans-serif;
   font-weight: 400;
 
   font-synthesis: none;
@@ -10,8 +10,8 @@
 }
 
 @font-face {
-  font-family: "Inconsolata";
-  src: local("Inconsolata"), url("./assets/fonts/Inconsolata.ttf") format("truetype");
+  font-family: "Nunito";
+  src: local("Nunito"), url("./assets/fonts/Nunito.ttf") format("truetype");
 }
 
 body {
