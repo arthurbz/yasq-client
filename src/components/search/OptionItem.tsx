@@ -1,8 +1,8 @@
 import { Space, Col, Typography, Image } from "antd"
-import { Song } from "../../types/Song"
+import { SearchOptionSong } from "../../types/Song"
 
 interface OptionItemProps {
-    song: Song
+    song: SearchOptionSong
 }
 
 function OptionItem(props: OptionItemProps) {

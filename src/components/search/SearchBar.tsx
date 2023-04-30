@@ -5,7 +5,7 @@ import { SearchOutlined, LoadingOutlined } from "@ant-design/icons"
 import { AxiosResponse, AxiosError } from "axios"
 import { axios } from "../../plugins/AxiosInstance"
 import OptionItem from "./OptionItem"
-import { Song } from "../../types/Song"
+import { SearchOptionSong } from "../../types/Song"
 
 function SearchBar() {
     const [searchQuery, setSearchQuery] = useState("")
@@ -13,12 +13,12 @@ function SearchBar() {
     const [options, setOptions] = useState<{ value: string, label: JSX.Element }[]>([])
     const { message } = App.useApp()
 
-    const { isFetching } = useQuery<AxiosResponse<Song[], any>, AxiosError<any, any>>({
+    const { isFetching } = useQuery<AxiosResponse<SearchOptionSong[], any>, AxiosError<any, any>>({
         queryKey: ["search", "youtube", "query", searchQuery],
         enabled: !!searchQuery,
         queryFn: () => axios.get(`/search/youtube?query=${searchQuery}`),
         onSuccess: response => {
-            setOptions(response.data.map((song: Song) => {
+            setOptions(response.data.map(song => {
                 return {
                     value: song.originId,
                     label: <OptionItem song={song} />

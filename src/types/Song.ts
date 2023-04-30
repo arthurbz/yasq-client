@@ -1,6 +1,7 @@
 import { ResourceOrigin } from "./ResourceOrigin"
 
 interface Song {
+    id: string
     originId: string
     source: ResourceOrigin
     artist: string
@@ -8,4 +9,12 @@ interface Song {
     thumbnail: string
 }
 
-export type { Song }
+interface SearchOptionSong {
+    originId: string
+    source: ResourceOrigin
+    artist: string
+    name: string
+    thumbnail: string
+}
+
+export type { SearchOptionSong, Song }
