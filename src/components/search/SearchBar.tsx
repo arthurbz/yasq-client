@@ -53,7 +53,6 @@ function SearchBar() {
 
     return (
         <AutoComplete
-            style={{ width: 400 }}
             options={options}
             value={inputValue}
             onSelect={onSelect}
