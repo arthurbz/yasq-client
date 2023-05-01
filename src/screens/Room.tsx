@@ -1,4 +1,5 @@
-import { Layout, Typography } from "antd"
+import { Layout, Row, Col, Typography } from "antd"
+const { Content } = Layout
 import { useParams } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
 import { AxiosError } from "axios"
@@ -27,12 +28,19 @@ function Room() {
 
     return (
         <Layout>
-            <Typography.Title>
-                {room?.name}
-            </Typography.Title>
+            <Content>
+                <Row style={{ alignItems: "center" }}>
+                    <Typography.Title ellipsis style={{ margin: 8 }}>
+                        {room?.name}
+                    </Typography.Title>
 
-            <SearchBar />
-            <SongList roomId={roomId} />
+                    <SearchBar />
+                </Row>
+
+                <Row style={{ height: 500 }}>
+                    <SongList roomId={roomId} />
+                </Row>
+            </Content>
         </Layout>
     )
 }

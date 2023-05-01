@@ -9,7 +9,7 @@ function SongItem({ song }: SongProps) {
     const { name, artist, thumbnail } = song
 
     return (
-        <Row gutter={16} style={{ padding: "8px 16px 8px 16px", width: "100%" }}>
+        <Row wrap={false} gutter={16} style={{ padding: "8px 16px 8px 16px", width: "100%" }}>
             <Image
                 src={thumbnail}
                 alt={name}
@@ -31,8 +31,6 @@ function SongItem({ song }: SongProps) {
                     {artist}
                 </Typography.Text>
             </Col>
-
-
         </Row>
     )
 }
