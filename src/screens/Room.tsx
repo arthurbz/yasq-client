@@ -1,4 +1,4 @@
-import { Layout, Row, Col, Typography } from "antd"
+import { Layout, Row, Typography } from "antd"
 const { Content } = Layout
 import { useParams } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
@@ -8,6 +8,7 @@ import { axios } from "../plugins/AxiosInstance"
 import SearchBar from "../components/search/SearchBar"
 import SongList from "../components/song/SongList"
 import { Room } from "../types/Room"
+import GlobalMusicPlayer from "../components/players/GlobalMusicPlayer"
 
 function Room() {
     const { id: roomId } = useParams()
@@ -39,6 +40,10 @@ function Room() {
 
                 <Row style={{ height: 500 }}>
                     <SongList roomId={roomId} />
+                </Row>
+
+                <Row style={{ padding: 8 }}>
+                    <GlobalMusicPlayer />
                 </Row>
             </Content>
         </Layout>

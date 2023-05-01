@@ -1,33 +1,30 @@
+import { useState, useEffect, useContext } from "react"
 import YouTube, { YouTubeEvent } from "react-youtube"
+import GlobalPlayerContext from "../../contexts/GlobalPlayerContext"
 
 function YouTubePlayer() {
-    let player: any | null
-    const onReady = (event: YouTubeEvent) => player = event.target
-    const play = () => player?.playVideo()
-    const pause = () => player?.pauseVideo()
-    const seekTo = () => player?.seekTo(60)
+    const { song, isPlaying, setIsReady } = useContext(GlobalPlayerContext)
+    const [player, setPlayer] = useState<any | undefined>()
+
+    useEffect(() => {
+        isPlaying ? player?.playVideo() : player?.pauseVideo()
+    }, [isPlaying])
+
+    useEffect(() => {
+        setIsReady(false)
+    }, [song])
+
+    const onReady = (event: YouTubeEvent) => {
+        setIsReady(true)
+        setPlayer(event.target)
+    }
 
     return (
-        <div>
-            <button onClick={play}>
-                play
-            </button>
-
-            <button onClick={pause}>
-                pause
-            </button>
-
-            <button onClick={seekTo}>
-                seek to 1min
-            </button>
-
-            <div style={{ display: "none" }}>
-                <YouTube
-                    videoId={"LnS0f46tx_E"}
-                    onReady={onReady}
-                />
-            </div>
-        </div>
+        <YouTube
+            style={{ display: "none" }}
+            videoId={song?.originId}
+            onReady={onReady}
+        />
     )
 }
 
