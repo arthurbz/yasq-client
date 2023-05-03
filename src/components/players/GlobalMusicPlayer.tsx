@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Row, Col, Button } from "antd"
 import { Song } from "../../types/Song"
 import { PlayCircleFilled, PauseCircleFilled } from "@ant-design/icons"
@@ -42,10 +42,9 @@ function GlobalMusicPlayer() {
     }
 
     const handleClick = () => {
-        if (!isReady) {
-            console.log("Not Ready")
+        // TODO - Think of a way to "wait" for it to be ready and then do the action
+        if (!isReady)
             return
-        }
 
         isPlaying ? setIsPlaying(false) : setIsPlaying(true)
     }
