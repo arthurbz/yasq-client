@@ -7,13 +7,15 @@ import { axios } from "../plugins/AxiosInstance"
 
 import SearchBar from "../components/search/SearchBar"
 import SongList from "../components/song/SongList"
-import { Room } from "../types/Room"
 import GlobalMusicPlayer from "../components/players/GlobalMusicPlayer"
+
+import { Room } from "../types/Room"
+import { ErrorResponseData } from "../types/ErrorResponseData"
 
 function Room() {
     const { id: roomId } = useParams()
 
-    const { data: room } = useQuery<Room, AxiosError<any, any>>({
+    const { data: room } = useQuery<Room, AxiosError<ErrorResponseData, any>>({
         queryKey: ["room", "find", roomId],
         enabled: !!roomId && typeof roomId == "string",
         queryFn: async () => await axios.get(`/room/find/${roomId}`).then(response => response.data),

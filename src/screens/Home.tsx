@@ -4,11 +4,13 @@ import { useNavigate } from "react-router-dom"
 import { useMutation } from "@tanstack/react-query"
 import { axios } from "../plugins/AxiosInstance"
 import YasqLogo from "../assets/images/yasq-logo.svg"
+import { AxiosError } from "axios"
+import { ErrorResponseData } from "../types/ErrorResponseData"
 
 function Home() {
     const { notification } = App.useApp()
     const navigate = useNavigate()
-    const { mutate } = useMutation({
+    const { mutate } = useMutation<{ roomId: string, userId: string }, AxiosError<ErrorResponseData, any>, string>({
         mutationKey: ["room", "create", "random"],
         mutationFn: async (name: string) => await axios.post("/room/create/random", { name }).then(response => response.data),
         onSuccess: (data) => {
