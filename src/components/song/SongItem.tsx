@@ -10,7 +10,11 @@ function SongItem({ song }: SongProps) {
     const { name, artist, thumbnail } = song
 
     return (
-        <Row wrap={false} gutter={16} style={{ padding: "8px 16px 8px 16px", width: "100%" }}>
+        <Row
+            wrap={false}
+            gutter={16}
+            style={{ padding: "8px 16px 8px 16px", width: "100%" }}
+        >
             <AlbumCover
                 thumbnail={thumbnail}
                 name={name}

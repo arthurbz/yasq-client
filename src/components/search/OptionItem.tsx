@@ -5,8 +5,8 @@ interface OptionItemProps {
     song: SearchOptionSong
 }
 
-function OptionItem(props: OptionItemProps) {
-    const { artist, name, thumbnail } = props.song
+function OptionItem({ song }: OptionItemProps) {
+    const { artist, name, thumbnail } = song
 
     return (
         <Space style={{ paddingTop: 6, paddingBottom: 6 }}>

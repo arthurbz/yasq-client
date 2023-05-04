@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { AutoComplete, Input, App } from "antd"
 import { SearchOutlined, LoadingOutlined } from "@ant-design/icons"
-import { AxiosResponse, AxiosError } from "axios"
+import { AxiosError } from "axios"
 import { axios } from "../../plugins/AxiosInstance"
 import OptionItem from "./OptionItem"
 import { SearchOptionSong } from "../../types/Song"
@@ -13,12 +13,12 @@ function SearchBar() {
     const [options, setOptions] = useState<{ value: string, label: JSX.Element }[]>([])
     const { message } = App.useApp()
 
-    const { isFetching } = useQuery<AxiosResponse<SearchOptionSong[], any>, AxiosError<any, any>>({
+    const { isFetching } = useQuery<SearchOptionSong[], AxiosError<any, any>>({
         queryKey: ["search", "youtube", "query", searchQuery],
         enabled: !!searchQuery,
-        queryFn: () => axios.get(`/search/youtube?query=${searchQuery}`),
-        onSuccess: response => {
-            setOptions(response.data.map(song => {
+        queryFn: async () => await axios.get(`/search/youtube?query=${searchQuery}`).then(response => response.data),
+        onSuccess: data => {
+            setOptions(data.map(song => {
                 return {
                     value: song.originId,
                     label: <OptionItem song={song} />
@@ -41,14 +41,12 @@ function SearchBar() {
         return () => clearTimeout(timeout)
     }, [inputValue])
 
-
     const onChange = (value: string) => {
         setInputValue(value)
     }
 
-    const onSelect = (value: string) => {
+    const onSelect = () => {
         setInputValue("")
-        console.log(value)
     }
 
     return (
