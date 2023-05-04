@@ -1,19 +1,28 @@
 import { useEffect, useState } from "react"
-import { useQuery } from "@tanstack/react-query"
+import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query"
 import { AutoComplete, Input, App } from "antd"
 import { SearchOutlined, LoadingOutlined } from "@ant-design/icons"
 import { AxiosError } from "axios"
 import { axios } from "../../plugins/AxiosInstance"
 import OptionItem from "./OptionItem"
 import { SearchOptionSong } from "../../types/Song"
+import { Song } from "../../types/Song"
+import { ErrorResponseData } from "../../types/ErrorResponseData"
+
+interface SearchBarItemOption {
+    value: string
+    song: SearchOptionSong
+    label: JSX.Element
+}
 
 function SearchBar() {
     const [searchQuery, setSearchQuery] = useState("")
     const [inputValue, setInputValue] = useState("")
-    const [options, setOptions] = useState<{ value: string, label: JSX.Element }[]>([])
+    const [options, setOptions] = useState<SearchBarItemOption[]>([])
     const { message } = App.useApp()
+    const queryClient = useQueryClient()
 
-    const { isFetching } = useQuery<SearchOptionSong[], AxiosError<any, any>>({
+    const { isFetching } = useQuery<SearchOptionSong[], AxiosError<ErrorResponseData, any>>({
         queryKey: ["search", "youtube", "query", searchQuery],
         enabled: !!searchQuery,
         queryFn: async () => await axios.get(`/search/youtube?query=${searchQuery}`).then(response => response.data),
@@ -21,6 +30,7 @@ function SearchBar() {
             setOptions(data.map(song => {
                 return {
                     value: song.originId,
+                    song: song,
                     label: <OptionItem song={song} />
                 }
             }))
@@ -31,6 +41,39 @@ function SearchBar() {
         },
         cacheTime: 1000 * 60 * 15,
         staleTime: 1000 * 60 * 15
+    })
+
+    const { mutate } = useMutation<{ id: string }, AxiosError<ErrorResponseData, any>, SearchOptionSong>({
+        mutationKey: ["song", "add"],
+        mutationFn: async (song: SearchOptionSong) => {
+            const body = {
+                info: song.originId,
+                roomId: "643ddaf8e3383314352be68e"
+                // NOTE: This is only temporary while we don't have a context to hold these values
+            }
+
+            return await axios.post("/song/add", body).then(response => response.data)
+        },
+        onSuccess: async (data, variables) => {
+            queryClient.setQueryData(
+                // NOTE: This is only temporary while we don't have a context to hold these values
+                ["song", "find", "room", "643ddaf8e3383314352be68e"],
+                (oldData: Song[] | undefined) => {
+                    const newSong: Song = {
+                        id: data.id,
+                        ...variables
+                    }
+
+                    return oldData ? [...oldData, newSong] : [newSong]
+                }
+            )
+            // NOTE: This is only temporary while we don't have a context to hold these values
+            await queryClient.invalidateQueries(["song", "find", "room", "643ddaf8e3383314352be68e"])
+        },
+        onError: error => {
+            const errorMessage = error.response?.data?.errorMessage
+            message.error(errorMessage ?? "Unable to add this song to the queue.")
+        }
     })
 
     useEffect(() => {
@@ -45,7 +88,8 @@ function SearchBar() {
         setInputValue(value)
     }
 
-    const onSelect = () => {
+    const onSelect = (value: string, option: SearchBarItemOption) => {
+        mutate(option.song)
         setInputValue("")
     }
 
