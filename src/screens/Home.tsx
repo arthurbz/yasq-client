@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { App, Layout, Button, Image, Input, Row, Col, Typography, Space, Form } from "antd"
 const { Title, Text, Paragraph } = Typography
 import { useNavigate } from "react-router-dom"
@@ -10,7 +11,9 @@ import { ErrorResponseData } from "../types/ErrorResponseData"
 function Home() {
     const { notification } = App.useApp()
     const navigate = useNavigate()
-    const { mutate } = useMutation<{ roomId: string, userId: string }, AxiosError<ErrorResponseData, any>, string>({
+    const [createMode, setCreateMode] = useState(true)
+
+    const { mutate: mutateCreate } = useMutation<{ roomId: string, userId: string }, AxiosError<ErrorResponseData, any>, string>({
         mutationKey: ["room", "create", "random"],
         mutationFn: async (name: string) => await axios.post("/room/create/random", { name }).then(response => response.data),
         onSuccess: (data) => {
@@ -28,11 +31,36 @@ function Home() {
         }
     })
 
-    const submit = (formValues: { roomName?: string }) => {
-        const { roomName } = formValues
+    // NOTE: The join method is not ready in the API, this is just a placeholder
+    const { mutate: mutateJoin } = useMutation<{ roomId: string, userId: string }, AxiosError<ErrorResponseData, any>, string>({
+        mutationKey: ["room", "join"],
+        mutationFn: async (name: string) => await axios.post("/room/create/random", { name }).then(response => response.data),
+        onSuccess: (data) => {
+            const { roomId, userId } = data
 
-        if (roomName)
-            mutate(roomName)
+            if (!roomId || !userId) {
+                notification.error({ message: "We are sorry, but there was an error when trying to join the room." })
+                return
+            }
+
+            navigate(`/room/${roomId}`)
+        },
+        onError: () => {
+            notification.error({ message: "We are sorry, but there was an error when trying to join the room." })
+        }
+    })
+
+    const submit = (formValues: { input?: string }) => {
+        const { input } = formValues
+
+        if (!input)
+            return
+
+        createMode ? mutateCreate(input) : mutateJoin(input)
+    }
+
+    const switchInputMode = () => {
+        setCreateMode(prevState => !prevState)
     }
 
     return (
@@ -58,31 +86,38 @@ function Home() {
                 </Paragraph>
             </Col>
 
-            <Col style={{ alignSelf: "center" }}>
+            <Col style={{ alignSelf: "center", rowGap: 0 }}>
                 <Row>
                     <Text style={{ fontSize: "1.6em", marginLeft: 8, fontWeight: "bold" }}>
                         Listen together now
                     </Text>
                 </Row>
+
                 <Form onFinish={submit}>
                     <Space.Compact>
-                        <Form.Item name="roomName">
+                        <Form.Item style={{ margin: 0 }} name="roomName">
                             <Input
-                                placeholder="Room Name"
+                                placeholder={createMode ? "Name" : "Code"}
                                 style={{ fontSize: "1.8em" }}
                             />
                         </Form.Item>
 
-                        <Form.Item>
+                        <Form.Item style={{ margin: 0 }}>
                             <Button
                                 type="primary"
-                                style={{ fontSize: "1.8em", height: "100%", fontWeight: "bold" }}
+                                style={{ fontSize: "1.8em", height: "100%", fontWeight: "bold", minWidth: 110 }}
                                 htmlType="submit"
                             >
-                                Create
+                                {createMode ? "Create" : "Join"}
                             </Button>
                         </Form.Item>
                     </Space.Compact>
+
+                    <Row>
+                        <Button type="text" onClick={switchInputMode}>
+                            {createMode ? "I want to join my friends instead" : "I want to create my own room"}
+                        </Button>
+                    </Row>
                 </Form>
             </Col>
         </Layout>
