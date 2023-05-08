@@ -31,14 +31,13 @@ function Home() {
         }
     })
 
-    // NOTE: The join method is not ready in the API, this is just a placeholder
-    const { mutate: mutateJoin } = useMutation<{ roomId: string, userId: string }, AxiosError<ErrorResponseData, any>, string>({
-        mutationKey: ["room", "join"],
-        mutationFn: async (name: string) => await axios.post("/room/create/random", { name }).then(response => response.data),
+    const { mutate: mutateJoin } = useMutation<{ participationId: string, roomId: string, userId: string }, AxiosError<ErrorResponseData, any>, string>({
+        mutationKey: ["participation", "join", "random"],
+        mutationFn: async (roomId: string) => await axios.post("/participation/join/random", { roomId }).then(response => response.data),
         onSuccess: (data) => {
-            const { roomId, userId } = data
+            const { participationId, roomId, userId } = data
 
-            if (!roomId || !userId) {
+            if (!participationId || !roomId || !userId) {
                 notification.error({ message: "We are sorry, but there was an error when trying to join the room." })
                 return
             }
@@ -95,7 +94,7 @@ function Home() {
 
                 <Form onFinish={submit}>
                     <Space.Compact>
-                        <Form.Item style={{ margin: 0 }} name="roomName">
+                        <Form.Item style={{ margin: 0 }} name="input">
                             <Input
                                 placeholder={createMode ? "Name" : "Code"}
                                 style={{ fontSize: "1.8em" }}
