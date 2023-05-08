@@ -7,6 +7,7 @@ import { axios } from "../plugins/AxiosInstance"
 
 import SearchBar from "../components/search/SearchBar"
 import SongList from "../components/song/SongList"
+import UserList from "../components/user/UserList"
 import GlobalMusicPlayer from "../components/players/GlobalMusicPlayer"
 
 import { Room } from "../types/Room"
@@ -42,6 +43,8 @@ function Room() {
 
                 <Row style={{ height: 500 }}>
                     <SongList roomId={roomId} />
+
+                    <UserList roomId={roomId} />
                 </Row>
 
                 <Row style={{ padding: 8 }}>
