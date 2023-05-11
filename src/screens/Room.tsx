@@ -1,32 +1,40 @@
-import { Layout, Row, Typography } from "antd"
+import { useContext } from "react"
+import { App, Layout, Row, Typography } from "antd"
 const { Content } = Layout
-import { useParams } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
 import { AxiosError } from "axios"
 import { axios } from "../plugins/AxiosInstance"
 
+// Components
 import SearchBar from "../components/search/SearchBar"
 import SongList from "../components/song/SongList"
 import UserList from "../components/user/UserList"
 import GlobalMusicPlayer from "../components/players/GlobalMusicPlayer"
 
+// Types
 import { Room } from "../types/Room"
 import { ErrorResponseData } from "../types/ErrorResponseData"
 
+// Contexts
+import GlobalDataContext from "../contexts/GlobalDataContext"
+
 function Room() {
+    const { message } = App.useApp()
+    const navigate = useNavigate()
+    const { room, setRoom } = useContext(GlobalDataContext)
     const { id: roomId } = useParams()
 
-    const { data: room } = useQuery<Room, AxiosError<ErrorResponseData, any>>({
+    useQuery<Room, AxiosError<ErrorResponseData, any>>({
         queryKey: ["room", "find", roomId],
         enabled: !!roomId && typeof roomId == "string",
+        staleTime: 5 * 60 * 1000,
+        retryDelay: 250,
         queryFn: async () => await axios.get(`/room/find/${roomId}`).then(response => response.data),
-        onSuccess: (data) => {
-            // TODO - WIP
-            console.log(data)
-        },
-        onError: (data) => {
-            // TODO - Redirect to main page and show a notification
-            console.log("Error", data)
+        onSuccess: room => setRoom(room),
+        onError: data => {
+            message.error(data.response?.data?.errorMessage)
+            navigate("/")
         }
     })
 
