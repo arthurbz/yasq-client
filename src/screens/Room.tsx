@@ -69,7 +69,7 @@ function Room() {
                         {room?.name}
                     </Typography.Title>
 
-                    <SearchBar />
+                    <SearchBar roomId={roomId} />
 
                     <UserProfileCard />
                 </Row>

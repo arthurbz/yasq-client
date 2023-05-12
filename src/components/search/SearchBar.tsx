@@ -15,7 +15,11 @@ interface SearchBarItemOption {
     label: JSX.Element
 }
 
-function SearchBar() {
+interface SearchBarProps {
+    roomId?: string
+}
+
+function SearchBar({ roomId }: SearchBarProps) {
     const [searchQuery, setSearchQuery] = useState("")
     const [inputValue, setInputValue] = useState("")
     const [options, setOptions] = useState<SearchBarItemOption[]>([])
@@ -48,16 +52,14 @@ function SearchBar() {
         mutationFn: async (song: SearchOptionSong) => {
             const body = {
                 info: song.originId,
-                roomId: "643ddaf8e3383314352be68e"
-                // NOTE: This is only temporary while we don't have a context to hold these values
+                roomId: roomId
             }
 
             return await axios.post("/song/add", body).then(response => response.data)
         },
         onSuccess: async (data, variables) => {
             queryClient.setQueryData(
-                // NOTE: This is only temporary while we don't have a context to hold these values
-                ["song", "find", "room", "643ddaf8e3383314352be68e"],
+                ["song", "find", "room", roomId],
                 (oldData: Song[] | undefined) => {
                     const newSong: Song = {
                         id: data.id,
@@ -67,8 +69,7 @@ function SearchBar() {
                     return oldData ? [...oldData, newSong] : [newSong]
                 }
             )
-            // NOTE: This is only temporary while we don't have a context to hold these values
-            await queryClient.invalidateQueries(["song", "find", "room", "643ddaf8e3383314352be68e"])
+            await queryClient.invalidateQueries(["song", "find", "room", roomId])
         },
         onError: error => {
             const errorMessage = error.response?.data?.errorMessage
