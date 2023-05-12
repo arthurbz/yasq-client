@@ -19,6 +19,7 @@ import { ErrorResponseData } from "../types/ErrorResponseData"
 // Contexts
 import GlobalDataContext from "../contexts/GlobalDataContext"
 import { getUserId, setUserId } from "../utils/StorageUtils"
+import UserProfileCard from "../components/user/UserProfileCard"
 
 function Room() {
     const { notification } = App.useApp()
@@ -69,6 +70,8 @@ function Room() {
                     </Typography.Title>
 
                     <SearchBar />
+
+                    <UserProfileCard />
                 </Row>
 
                 <Row style={{ height: 500 }}>
