@@ -2,7 +2,7 @@ import { useContext } from "react"
 import { App, Layout, Row, Typography } from "antd"
 const { Content } = Layout
 import { useParams, useNavigate } from "react-router-dom"
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { AxiosError } from "axios"
 import { axios } from "../plugins/AxiosInstance"
 
@@ -18,9 +18,10 @@ import { ErrorResponseData } from "../types/ErrorResponseData"
 
 // Contexts
 import GlobalDataContext from "../contexts/GlobalDataContext"
+import { getUserId, setUserId } from "../utils/StorageUtils"
 
 function Room() {
-    const { message } = App.useApp()
+    const { notification } = App.useApp()
     const navigate = useNavigate()
     const { room, setRoom } = useContext(GlobalDataContext)
     const { id: roomId } = useParams()
@@ -33,10 +34,31 @@ function Room() {
         queryFn: async () => await axios.get(`/room/find/${roomId}`).then(response => response.data),
         onSuccess: room => setRoom(room),
         onError: data => {
-            message.error(data.response?.data?.errorMessage)
+            notification.error({ message: data.response?.data?.errorMessage })
             navigate("/")
         }
     })
+
+    const { mutate: mutateJoinWithRandomUser } = useMutation<{ participationId: string, roomId: string, userId: string }, AxiosError<ErrorResponseData, any>, string>({
+        mutationKey: ["participation", "join", "random"],
+        mutationFn: async (roomId: string) => await axios.post("/participation/join/random", { roomId }).then(response => response.data),
+        onSuccess: (data) => {
+            const { participationId, roomId, userId } = data
+
+            if (!participationId || !roomId || !userId) {
+                notification.error({ message: "We are sorry, but there was an error when trying to join the room." })
+                return
+            }
+
+            setUserId(userId)
+            navigate(`/room/${roomId}`)
+        },
+        onError: () => notification.error({ message: "We are sorry, but there was an error when trying to join the room." })
+    })
+
+    const storageUserId = getUserId()
+    if (!storageUserId && roomId)
+        mutateJoinWithRandomUser(roomId)
 
     return (
         <Layout>

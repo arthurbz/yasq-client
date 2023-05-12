@@ -7,6 +7,7 @@ import { axios } from "../plugins/AxiosInstance"
 import YasqLogo from "../assets/images/yasq-logo.svg"
 import { AxiosError } from "axios"
 import { ErrorResponseData } from "../types/ErrorResponseData"
+import { setUserId } from "../utils/StorageUtils"
 
 function Home() {
     const { notification } = App.useApp()
@@ -42,11 +43,10 @@ function Home() {
                 return
             }
 
+            setUserId(userId)
             navigate(`/room/${roomId}`)
         },
-        onError: () => {
-            notification.error({ message: "We are sorry, but there was an error when trying to join the room." })
-        }
+        onError: () => notification.error({ message: "We are sorry, but there was an error when trying to join the room." })
     })
 
     const submit = (formValues: { input?: string }) => {
