@@ -1,14 +1,16 @@
-import { useState } from "react"
-import { Row, Col, Button } from "antd"
+import { useContext, useEffect, useState } from "react"
+import { Row, Col, Button, App } from "antd"
 import { Song } from "../../types/Song"
 import { PlayCircleFilled, PauseCircleFilled } from "@ant-design/icons"
+import { socket } from "../../plugins/SocketInstance"
 
 // Components
 import AlbumCover from "../song/AlbumCover"
+import YouTubePlayer from "./YouTubePlayer"
 
 // Contexts
+import GlobalDataContext from "../../contexts/GlobalDataContext"
 import GlobalPlayerContext, { GlobalPlayerContextParams } from "../../contexts/GlobalPlayerContext"
-import YouTubePlayer from "./YouTubePlayer"
 
 const placeholderSong1 = {
     id: "6442e0d686696084024069e1",
@@ -29,6 +31,8 @@ const placeholderSong2 = {
 } as Song | undefined
 
 function GlobalMusicPlayer() {
+    const { notification } = App.useApp()
+    const { room } = useContext(GlobalDataContext)
     const [isPlaying, setIsPlaying] = useState(false)
     const [isReady, setIsReady] = useState(false)
     const [song, setSong] = useState<Song | undefined>(placeholderSong1)
@@ -41,12 +45,22 @@ function GlobalMusicPlayer() {
         setSong
     }
 
+    useEffect(() => {
+        socket.on("play", () => setIsPlaying(true))
+        socket.on("pause", () => setIsPlaying(false))
+    }, [])
+
     const handleClick = () => {
+        if (!room) {
+            notification.error({ message: "It seems like you are not in a room." })
+            return
+        }
+
         // TODO - Think of a way to "wait" for it to be ready and then do the action
         if (!isReady)
             return
 
-        isPlaying ? setIsPlaying(false) : setIsPlaying(true)
+        isPlaying ? socket.emit("pause", room.id) : socket.emit("play", room.id)
     }
 
     const dumbChangePlaceholderSong = () => {

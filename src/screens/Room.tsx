@@ -24,12 +24,6 @@ import UserProfileCard from "../components/user/UserProfileCard"
 import { JoinWithUser } from "../types/Mutations"
 
 function Room() {
-    useEffect(() => {
-        socket.on("connect", () => {
-            console.log("Socket connected!", socket.id)
-        })
-    }, [])
-
     const { notification } = App.useApp()
     const queryClient = useQueryClient()
     const navigate = useNavigate()
@@ -37,8 +31,16 @@ function Room() {
     const { id: roomId } = useParams()
 
     useEffect(() => {
+        socket.on("connect", () => {
+            console.log("Socket connected!", socket.id)
+        })
+    }, [])
+
+    useEffect(() => {
         if (!room?.id)
             return
+
+        socket.emit("joinRoom", roomId)
 
         const userId = getUserId()
         if (userId)
