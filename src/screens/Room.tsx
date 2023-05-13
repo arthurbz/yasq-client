@@ -1,8 +1,8 @@
-import { useContext } from "react"
+import { useEffect, useContext } from "react"
 import { App, Layout, Row, Typography } from "antd"
 const { Content } = Layout
 import { useParams, useNavigate } from "react-router-dom"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { AxiosError } from "axios"
 import { axios } from "../plugins/AxiosInstance"
 
@@ -20,12 +20,25 @@ import { ErrorResponseData } from "../types/ErrorResponseData"
 import GlobalDataContext from "../contexts/GlobalDataContext"
 import { getUserId, setUserId } from "../utils/StorageUtils"
 import UserProfileCard from "../components/user/UserProfileCard"
+import { JoinWithUser } from "../types/Mutations"
 
 function Room() {
     const { notification } = App.useApp()
+    const queryClient = useQueryClient()
     const navigate = useNavigate()
     const { room, setRoom } = useContext(GlobalDataContext)
     const { id: roomId } = useParams()
+
+    useEffect(() => {
+        if (!room?.id)
+            return
+
+        const userId = getUserId()
+        if (userId)
+            mutateJoinWithUser({ userId, roomId: room.id })
+        else
+            mutateJoinWithRandomUser(room.id)
+    }, [room])
 
     useQuery<Room, AxiosError<ErrorResponseData, any>>({
         queryKey: ["room", "find", roomId],
@@ -43,7 +56,7 @@ function Room() {
     const { mutate: mutateJoinWithRandomUser } = useMutation<{ participationId: string, roomId: string, userId: string }, AxiosError<ErrorResponseData, any>, string>({
         mutationKey: ["participation", "join", "random"],
         mutationFn: async (roomId: string) => await axios.post("/participation/join/random", { roomId }).then(response => response.data),
-        onSuccess: (data) => {
+        onSuccess: async (data) => {
             const { participationId, roomId, userId } = data
 
             if (!participationId || !roomId || !userId) {
@@ -52,14 +65,32 @@ function Room() {
             }
 
             setUserId(userId)
-            navigate(`/room/${roomId}`)
+            await queryClient.invalidateQueries(["participation", "find", "room", roomId])
         },
-        onError: () => notification.error({ message: "We are sorry, but there was an error when trying to join the room." })
+        onError: () => {
+            notification.error({ message: "We are sorry, but there was an error when trying to join the room." })
+            navigate("/")
+        }
     })
 
-    const storageUserId = getUserId()
-    if (!storageUserId && roomId)
-        mutateJoinWithRandomUser(roomId)
+    const { mutate: mutateJoinWithUser } = useMutation<{ id: string }, AxiosError<ErrorResponseData, any>, JoinWithUser>({
+        mutationKey: ["participation", "join"],
+        mutationFn: async ({ roomId, userId }: JoinWithUser) => {
+            const body = { userId, roomId }
+            return await axios.post("/participation/join", body).then(response => response.data)
+        },
+        onSuccess: async (data) => {
+            const { id } = data
+
+            if (!id)
+                notification.error({ message: "We are sorry, but there was an error when trying to join the room." })
+            await queryClient.invalidateQueries(["participation", "find", "room", roomId])
+        },
+        onError: () => {
+            notification.error({ message: "We are sorry, but there was an error when trying to join the room." })
+            navigate("/")
+        }
+    })
 
     return (
         <Layout>
