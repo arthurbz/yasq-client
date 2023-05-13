@@ -5,6 +5,7 @@ import { useParams, useNavigate } from "react-router-dom"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { AxiosError } from "axios"
 import { axios } from "../plugins/AxiosInstance"
+import { socket } from "../plugins/SocketInstance"
 
 // Components
 import SearchBar from "../components/search/SearchBar"
@@ -23,6 +24,12 @@ import UserProfileCard from "../components/user/UserProfileCard"
 import { JoinWithUser } from "../types/Mutations"
 
 function Room() {
+    useEffect(() => {
+        socket.on("connect", () => {
+            console.log("Socket connected!", socket.id)
+        })
+    }, [])
+
     const { notification } = App.useApp()
     const queryClient = useQueryClient()
     const navigate = useNavigate()
