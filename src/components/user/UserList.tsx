@@ -1,7 +1,9 @@
+import { useEffect } from "react"
 import { List } from "antd"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { axios } from "../../plugins/AxiosInstance"
 import { AxiosError } from "axios"
+import { socket } from "../../plugins/SocketInstance"
 
 import { Participation } from "../../types/Participation"
 import UserItem from "./UserItem"
@@ -11,6 +13,14 @@ interface UserListProps {
 }
 
 function UserList({ roomId }: UserListProps) {
+    const queryClient = useQueryClient()
+
+    useEffect(() => {
+        socket.on("refreshUsers", () => {
+            queryClient.invalidateQueries(["participation", "find", "room", roomId])
+        })
+    }, [])
+
     const { data: participations, isLoading } = useQuery<Participation[], AxiosError<any, any>>({
         queryKey: ["participation", "find", "room", roomId],
         enabled: !!roomId,

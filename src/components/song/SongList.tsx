@@ -1,7 +1,9 @@
+import { useEffect } from "react"
 import { List } from "antd"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { axios } from "../../plugins/AxiosInstance"
 import { AxiosError } from "axios"
+import { socket } from "../../plugins/SocketInstance"
 import { Song } from "../../types/Song"
 import SongItem from "./SongItem"
 
@@ -10,6 +12,14 @@ interface SongListProps {
 }
 
 function SongList({ roomId }: SongListProps) {
+    const queryClient = useQueryClient()
+
+    useEffect(() => {
+        socket.on("refreshSongs", () => {
+            queryClient.invalidateQueries(["song", "find", "room", roomId])
+        })
+    }, [])
+
     const { data: songs, isLoading } = useQuery<Song[], AxiosError<any, any>>({
         queryKey: ["song", "find", "room", roomId],
         enabled: !!roomId,

@@ -74,7 +74,6 @@ function Room() {
             }
 
             setUserId(userId)
-            await queryClient.invalidateQueries(["participation", "find", "room", roomId])
         },
         onError: () => {
             notification.error({ message: "We are sorry, but there was an error when trying to join the room." })
@@ -93,7 +92,6 @@ function Room() {
 
             if (!id)
                 notification.error({ message: "We are sorry, but there was an error when trying to join the room." })
-            await queryClient.invalidateQueries(["participation", "find", "room", roomId])
         },
         onError: () => {
             notification.error({ message: "We are sorry, but there was an error when trying to join the room." })

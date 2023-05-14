@@ -69,7 +69,6 @@ function SearchBar({ roomId }: SearchBarProps) {
                     return oldData ? [...oldData, newSong] : [newSong]
                 }
             )
-            await queryClient.invalidateQueries(["song", "find", "room", roomId])
         },
         onError: error => {
             const errorMessage = error.response?.data?.errorMessage
