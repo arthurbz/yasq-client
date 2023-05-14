@@ -1,16 +1,20 @@
 import { useContext, useEffect, useState } from "react"
 import { Row, Col, Button, App } from "antd"
-import { Song } from "../../types/Song"
 import { PlayCircleFilled, PauseCircleFilled } from "@ant-design/icons"
 import { socket } from "../../plugins/SocketInstance"
 
 // Components
 import AlbumCover from "../song/AlbumCover"
 import YouTubePlayer from "./YouTubePlayer"
+import VolumeSlider from "./VolumeSlider"
 
 // Contexts
 import GlobalDataContext from "../../contexts/GlobalDataContext"
 import GlobalPlayerContext, { GlobalPlayerContextParams } from "../../contexts/GlobalPlayerContext"
+
+// Types
+import { Volume } from "../../types/Volume"
+import { Song } from "../../types/Song"
 
 const placeholderSong1 = {
     id: "6442e0d686696084024069e1",
@@ -36,13 +40,16 @@ function GlobalMusicPlayer() {
     const [isPlaying, setIsPlaying] = useState(false)
     const [isReady, setIsReady] = useState(false)
     const [song, setSong] = useState<Song | undefined>(placeholderSong1)
+    const [volume, setVolume] = useState<Volume>({ value: 15, isMuted: false })
     const globalPlayerContextParams: GlobalPlayerContextParams = {
         isPlaying,
         setIsPlaying,
         isReady,
         setIsReady,
         song,
-        setSong
+        setSong,
+        volume,
+        setVolume
     }
 
     useEffect(() => {
@@ -56,7 +63,7 @@ function GlobalMusicPlayer() {
             return
         }
 
-        // TODO - Think of a way to "wait" for it to be ready and then do the action
+        // TODO: Think of a way to "wait" for it to be ready and then do the action
         if (!isReady)
             return
 
@@ -74,50 +81,54 @@ function GlobalMusicPlayer() {
     }
 
     return (
-        <Row
-            style={{
-                width: "100%",
-                borderRadius: 8,
-                overflow: "hidden",
-                padding: 16
-            }}
-            gutter={16}
-        >
-            <AlbumCover
-                thumbnail={song?.thumbnail}
-                name={song?.name}
-                height={256}
-                width={256}
-            />
+        <GlobalPlayerContext.Provider value={globalPlayerContextParams}>
+            <Row
+                style={{
+                    width: "100%",
+                    borderRadius: 8,
+                    overflow: "hidden",
+                    padding: 16
+                }}
+                gutter={16}
+            >
+                <AlbumCover
+                    thumbnail={song?.thumbnail}
+                    name={song?.name}
+                    height={256}
+                    width={256}
+                />
 
-            <Col span={1}>
-                <Button
-                    type="text"
-                    shape="round"
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        height: 64,
-                        width: 64
-                    }}
-                    onClick={handleClick}
-                >
-                    {isPlaying
-                        ? <PauseCircleFilled style={{ fontSize: 52 }} />
-                        : <PlayCircleFilled style={{ fontSize: 52 }} />
-                    }
-                </Button>
+                <Col span={4}>
+                    <Button
+                        type="text"
+                        shape="round"
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            height: 64,
+                            width: 64
+                        }}
+                        onClick={handleClick}
+                    >
+                        {isPlaying
+                            ? <PauseCircleFilled style={{ fontSize: 52 }} />
+                            : <PlayCircleFilled style={{ fontSize: 52 }} />
+                        }
+                    </Button>
 
-                <Button onClick={dumbChangePlaceholderSong}>
-                    Change Song
-                </Button>
-            </Col>
+                    <Button onClick={dumbChangePlaceholderSong}>
+                        Change Song
+                    </Button>
+                </Col>
 
-            <GlobalPlayerContext.Provider value={globalPlayerContextParams}>
+                <Col span={4}>
+                    <VolumeSlider />
+                </Col>
+
                 <YouTubePlayer />
-            </GlobalPlayerContext.Provider>
-        </Row>
+            </Row>
+        </GlobalPlayerContext.Provider>
     )
 }
 

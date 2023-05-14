@@ -9,11 +9,11 @@ import GlobalPlayerContext from "../../contexts/GlobalPlayerContext"
 */
 
 function YouTubePlayer() {
-    const { song, isPlaying, isReady, setIsReady } = useContext(GlobalPlayerContext)
+    const { song, isPlaying, isReady, setIsReady, volume } = useContext(GlobalPlayerContext)
     const [player, setPlayer] = useState<ReactYouTubePlayer | undefined>()
 
     useEffect(() => {
-        // TODO - Think of a way to "wait" for it to be ready and then do the action
+        // TODO: Think of a way to "wait" for it to be ready and then do the action
         if (!isReady)
             return
 
@@ -36,13 +36,28 @@ function YouTubePlayer() {
             Otherwise the video could start in the middle if user was already watching it on YouTube.
             Also need to pause it, or else the video could start playing depending on the state.
 
-            TODO - Still need to find out why after changing song, its still starting from the middle,
-                   like the user was already watching it.
+            TODO:
+                Still need to find out why after changing song, its still starting from the middle,
+                like the user was already watching it.
         */
         player.getDuration()
         player.playVideo().seekTo(1, true).pauseVideo()
         console.log(player.getCurrentTime())
     }, [player])
+
+    useEffect(() => {
+        if (!player)
+            return
+
+        player.setVolume(volume.value)
+
+        // NOTE: If we always unmute, when volume is set to 0 it'll keep reproducing sounds
+        if (player.isMuted() && !volume.isMuted && volume.value != 0)
+            player.unMute()
+
+        if (!player.isMuted() && volume.isMuted)
+            player.mute()
+    }, [volume])
 
     const onReady = (event: YouTubeEvent) => {
         if (player)
