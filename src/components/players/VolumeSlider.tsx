@@ -1,4 +1,4 @@
-import { Col, Row, Slider, Button } from "antd"
+import { Col, Row, Slider, Button, Tooltip } from "antd"
 import { SoundTwoTone, SoundOutlined } from "@ant-design/icons"
 import { useContext } from "react"
 import GlobalPlayerContext from "../../contexts/GlobalPlayerContext"
@@ -25,21 +25,23 @@ function VolumeSlider() {
     return (
         <Row gutter={8} style={{ alignItems: "center" }}>
             <Col>
-                <Button
-                    type="text"
-                    shape="round"
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        height: 32,
-                        width: 32,
-                        fontSize: 20
-                    }}
-                    onClick={handleClick}
-                >
-                    {volume.isMuted ? <SoundOutlined /> : <SoundTwoTone />}
-                </Button>
+                <Tooltip title={volume.isMuted ? "Unmute" : "Mute"}>
+                    <Button
+                        type="text"
+                        shape="round"
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            height: 32,
+                            width: 32,
+                            fontSize: 20
+                        }}
+                        onClick={handleClick}
+                    >
+                        {volume.isMuted ? <SoundOutlined /> : <SoundTwoTone />}
+                    </Button>
+                </Tooltip>
             </Col>
 
             <Col flex="auto">
