@@ -7,46 +7,56 @@ import { axios } from "../plugins/AxiosInstance"
 import YasqLogo from "../assets/images/yasq-logo.svg"
 import { AxiosError } from "axios"
 import { ErrorResponseData } from "../types/ErrorResponseData"
-import { setUserId } from "../utils/StorageUtils"
+import { getUserId, setUserId } from "../utils/StorageUtils"
+import { CreateRoom, JoinWithUser, CreateOrJoinRoom } from "../types/CustomReactQueryTypes"
 
 function Home() {
     const { notification } = App.useApp()
     const navigate = useNavigate()
     const [createMode, setCreateMode] = useState(true)
 
-    const { mutate: mutateCreate } = useMutation<{ roomId: string, userId: string }, AxiosError<ErrorResponseData, any>, string>({
-        mutationKey: ["room", "create", "random"],
-        mutationFn: async (name: string) => await axios.post("/room/create/random", { name }).then(response => response.data),
-        onSuccess: (data) => {
-            const { roomId, userId } = data
+    const onSuccess = (data: CreateOrJoinRoom) => {
+        const { participationId, roomId, userId } = data
 
-            if (!roomId || !userId) {
-                notification.error({ message: "We are sorry, but there was an error when trying to create your room." })
-                return
-            }
-
-            navigate(`/room/${roomId}`)
-        },
-        onError: () => {
-            notification.error({ message: "We are sorry, but there was an error when trying to create your room." })
+        if (!participationId || !roomId || !userId) {
+            notification.error({ message: "We are sorry, but there was an error when trying to join the room." })
+            return
         }
+
+        setUserId(userId)
+        navigate(`/room/${roomId}`)
+    }
+
+    const onError = () => {
+        notification.error({ message: "We are sorry, but there was an error when trying to join the room." })
+    }
+
+    const { mutate: mutateCreateWithRandomUser } = useMutation<CreateOrJoinRoom, AxiosError<ErrorResponseData, any>, string>({
+        mutationKey: ["room", "create", "random"],
+        mutationFn: async name => await axios.post("/room/create/random", { name }).then(response => response.data),
+        onSuccess: onSuccess,
+        onError: onError
     })
 
-    const { mutate: mutateJoin } = useMutation<{ participationId: string, roomId: string, userId: string }, AxiosError<ErrorResponseData, any>, string>({
+    const { mutate: mutateCreate } = useMutation<CreateOrJoinRoom, AxiosError<ErrorResponseData, any>, CreateRoom>({
+        mutationKey: ["room", "create"],
+        mutationFn: async createRoom => await axios.post("/room/create", createRoom).then(response => response.data),
+        onSuccess: onSuccess,
+        onError: onError
+    })
+
+    const { mutate: mutateJoinWithRandomUser } = useMutation<CreateOrJoinRoom, AxiosError<ErrorResponseData, any>, string>({
         mutationKey: ["participation", "join", "random"],
-        mutationFn: async (roomId: string) => await axios.post("/participation/join/random", { roomId }).then(response => response.data),
-        onSuccess: (data) => {
-            const { participationId, roomId, userId } = data
+        mutationFn: async roomId => await axios.post("/participation/join/random", { roomId }).then(response => response.data),
+        onSuccess: onSuccess,
+        onError: onError
+    })
 
-            if (!participationId || !roomId || !userId) {
-                notification.error({ message: "We are sorry, but there was an error when trying to join the room." })
-                return
-            }
-
-            setUserId(userId)
-            navigate(`/room/${roomId}`)
-        },
-        onError: () => notification.error({ message: "We are sorry, but there was an error when trying to join the room." })
+    const { mutate: mutateJoin } = useMutation<CreateOrJoinRoom, AxiosError<ErrorResponseData, any>, JoinWithUser>({
+        mutationKey: ["participation", "join"],
+        mutationFn: async joinWithUser => await axios.post("/participation/join", joinWithUser).then(response => response.data),
+        onSuccess: onSuccess,
+        onError: onError
     })
 
     const submit = (formValues: { input?: string }) => {
@@ -55,7 +65,17 @@ function Home() {
         if (!input)
             return
 
-        createMode ? mutateCreate(input) : mutateJoin(input)
+        const storageUserId = getUserId()
+
+        if (storageUserId) {
+            createMode
+                ? mutateCreate({ name: input, userId: storageUserId })
+                : mutateJoin({ roomId: input, userId: storageUserId })
+        } else {
+            createMode
+                ? mutateCreateWithRandomUser(input)
+                : mutateJoinWithRandomUser(input)
+        }
     }
 
     const switchInputMode = () => {
