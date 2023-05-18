@@ -7,23 +7,26 @@ import { AxiosError } from "axios"
 import { axios } from "../plugins/AxiosInstance"
 import { socket } from "../plugins/SocketInstance"
 
+// Utils
+import { getUserId, setUserId } from "../utils/StorageUtils"
+
 // Components
 import SearchBar from "../components/search/SearchBar"
 import SongList from "../components/song/SongList"
 import UserList from "../components/user/UserList"
+import UserProfileCard from "../components/user/UserProfileCard"
 import GlobalMusicPlayer from "../components/players/GlobalMusicPlayer"
+import ChatInput from "../components/chat/ChatInput"
+import ChatHistory from "../components/chat/ChatHistory"
 
 // Types
 import { Room } from "../types/Room"
 import { User } from "../types/User"
 import { ErrorResponseData } from "../types/ErrorResponseData"
+import { CreateOrJoinRoom, JoinWithUser } from "../types/CustomReactQueryTypes"
 
 // Contexts
 import GlobalDataContext from "../contexts/GlobalDataContext"
-import { getUserId, setUserId } from "../utils/StorageUtils"
-import UserProfileCard from "../components/user/UserProfileCard"
-import { CreateOrJoinRoom, JoinWithUser } from "../types/CustomReactQueryTypes"
-import ChatInput from "../components/chat/ChatInput"
 
 function Room() {
     const { notification } = App.useApp()
@@ -120,6 +123,7 @@ function Room() {
 
                     <UserList roomId={roomId} />
 
+                    <ChatHistory />
                     <ChatInput />
                 </Row>
 

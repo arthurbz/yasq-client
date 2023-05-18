@@ -1,32 +1,35 @@
+import { useContext } from "react"
 import { Space, Input, Button, Form } from "antd"
 import { SendOutlined } from "@ant-design/icons"
 import { socket } from "../../plugins/SocketInstance"
-import { useContext } from "react"
 import GlobalDataContext from "../../contexts/GlobalDataContext"
+import { Message } from "../../types/Message"
 
 const MAX_MESSAGE_LENGTH = 500
 
 function ChatInput() {
     const { room, user } = useContext(GlobalDataContext)
 
-    const sendMessage = (form: { message: string }) => {
-        const { message } = form
+    const sendMessage = (form: { text: string }) => {
+        const { text } = form
 
-        if (!user || !room || !message || message.length > MAX_MESSAGE_LENGTH)
+        if (!user || !room || !text || text.length > MAX_MESSAGE_LENGTH)
             return
 
-        socket.emit("message", {
-            name: user.name,
-            pfpPath: user.pfpPath,
-            message: message,
+        const message: Message = {
+            user: user,
+            roomId: room.id,
+            message: text,
             date: new Date()
-        })
+        }
+
+        socket.emit("sendMessage", message)
     }
 
     return (
         <Form onFinish={sendMessage}>
             <Space>
-                <Form.Item name="message">
+                <Form.Item name="text">
                     <Input.TextArea
                         maxLength={MAX_MESSAGE_LENGTH}
                         placeholder="Message your friends"
