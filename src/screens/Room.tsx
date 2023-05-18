@@ -15,6 +15,7 @@ import GlobalMusicPlayer from "../components/players/GlobalMusicPlayer"
 
 // Types
 import { Room } from "../types/Room"
+import { User } from "../types/User"
 import { ErrorResponseData } from "../types/ErrorResponseData"
 
 // Contexts
@@ -22,12 +23,14 @@ import GlobalDataContext from "../contexts/GlobalDataContext"
 import { getUserId, setUserId } from "../utils/StorageUtils"
 import UserProfileCard from "../components/user/UserProfileCard"
 import { CreateOrJoinRoom, JoinWithUser } from "../types/CustomReactQueryTypes"
+import ChatInput from "../components/chat/ChatInput"
 
 function Room() {
     const { notification } = App.useApp()
     const navigate = useNavigate()
-    const { room, setRoom } = useContext(GlobalDataContext)
+    const { room, setRoom, user, setUser } = useContext(GlobalDataContext)
     const { id: roomId } = useParams()
+    const userId = getUserId()
 
     useEffect(() => {
         socket.on("connect", () => {
@@ -41,7 +44,6 @@ function Room() {
 
         socket.emit("joinRoom", roomId)
 
-        const userId = getUserId()
         if (userId)
             mutateJoinWithUser({ userId, roomId: room.id })
         else
@@ -77,6 +79,15 @@ function Room() {
         }
     })
 
+    useQuery<User, AxiosError<ErrorResponseData, any>>({
+        queryKey: ["room", "find", userId],
+        enabled: !!userId,
+        staleTime: 5 * 60 * 1000,
+        retryDelay: 250,
+        queryFn: async () => await axios.get(`/user/find/${userId}`).then(response => response.data),
+        onSuccess: user => setUser(user),
+    })
+
     const { mutate: mutateJoinWithRandomUser } = useMutation<CreateOrJoinRoom, AxiosError<ErrorResponseData, any>, string>({
         mutationKey: ["participation", "join", "random"],
         mutationFn: async roomId => await axios.post("/participation/join/random", { roomId }).then(response => response.data),
@@ -101,13 +112,15 @@ function Room() {
 
                     <SearchBar roomId={roomId} />
 
-                    <UserProfileCard />
+                    <UserProfileCard user={user} />
                 </Row>
 
                 <Row style={{ height: 500 }}>
                     <SongList roomId={roomId} />
 
                     <UserList roomId={roomId} />
+
+                    <ChatInput />
                 </Row>
 
                 <Row style={{ padding: 8 }}>
