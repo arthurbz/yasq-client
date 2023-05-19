@@ -18,6 +18,10 @@ function SongList({ roomId }: SongListProps) {
         socket.on("refreshSongs", () => {
             queryClient.invalidateQueries(["song", "find", "room", roomId])
         })
+
+        return () => {
+            socket.off("refreshSongs")
+        }
     }, [])
 
     const { data: songs, isLoading } = useQuery<Song[], AxiosError<any, any>>({

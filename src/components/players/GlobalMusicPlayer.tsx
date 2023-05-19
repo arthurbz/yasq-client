@@ -55,6 +55,11 @@ function GlobalMusicPlayer() {
     useEffect(() => {
         socket.on("play", () => setIsPlaying(true))
         socket.on("pause", () => setIsPlaying(false))
+
+        return () => {
+            socket.off("play")
+            socket.off("pause")
+        }
     }, [])
 
     const handleClick = () => {

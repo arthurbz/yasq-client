@@ -39,6 +39,10 @@ function Room() {
         socket.on("connect", () => {
             console.log("Socket connected!", socket.id)
         })
+
+        return () => {
+            socket.off("connect")
+        }
     }, [])
 
     useEffect(() => {

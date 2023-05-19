@@ -19,6 +19,10 @@ function UserList({ roomId }: UserListProps) {
         socket.on("refreshUsers", () => {
             queryClient.invalidateQueries(["participation", "find", "room", roomId])
         })
+
+        return () => {
+            socket.off("refreshUsers")
+        }
     }, [])
 
     const { data: participations, isLoading } = useQuery<Participation[], AxiosError<any, any>>({
