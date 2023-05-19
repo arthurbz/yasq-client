@@ -2,6 +2,7 @@ import { useContext } from "react"
 import { Space, Input, Button, Form } from "antd"
 import { SendOutlined } from "@ant-design/icons"
 import { socket } from "../../plugins/SocketInstance"
+import dayjs from "dayjs"
 import GlobalDataContext from "../../contexts/GlobalDataContext"
 import { Message } from "../../types/Message"
 
@@ -9,9 +10,10 @@ const MAX_MESSAGE_LENGTH = 500
 
 function ChatInput() {
     const { room, user } = useContext(GlobalDataContext)
+    const [form] = Form.useForm()
 
-    const sendMessage = (form: { text: string }) => {
-        const { text } = form
+    const sendMessage = (formValues: { text: string }) => {
+        const { text } = formValues
 
         if (!user || !room || !text || text.length > MAX_MESSAGE_LENGTH)
             return
@@ -19,15 +21,16 @@ function ChatInput() {
         const message: Message = {
             user: user,
             roomId: room.id,
-            message: text,
-            date: new Date()
+            content: text,
+            date: dayjs().unix()
         }
 
+        form.resetFields()
         socket.emit("sendMessage", message)
     }
 
     return (
-        <Form onFinish={sendMessage}>
+        <Form form={form} onFinish={sendMessage}>
             <Space>
                 <Form.Item name="text">
                     <Input.TextArea

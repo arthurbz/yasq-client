@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { socket } from "../../plugins/SocketInstance"
-import { Col, Row } from "antd"
 import { Message } from "../../types/Message"
+import ChatMessage from "./ChatMessage"
 
 function ChatHistory() {
     const [messageHistory, setMessageHistory] = useState<Message[]>([])
@@ -20,18 +20,7 @@ function ChatHistory() {
         <div>
             Chat History
             {
-                messageHistory.map(m => {
-                    return (
-                        <Col key={`${m.user.id}-${m.date}`}>
-                            <Row>
-                                {m.user.name}
-                            </Row>
-                            <Row>
-                                {m.message}
-                            </Row>
-                        </Col>
-                    )
-                })
+                messageHistory.map(m => <ChatMessage key={`${m.user.id}-${m.date}`} message={m} />)
             }
         </div>
     )
