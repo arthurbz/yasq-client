@@ -4,7 +4,7 @@ const { Title, Text, Paragraph } = Typography
 import { useNavigate } from "react-router-dom"
 import { useMutation } from "@tanstack/react-query"
 import { axios } from "../plugins/AxiosInstance"
-import YasqLogo from "../assets/images/yasq-logo.svg"
+import YasqLogo from "../assets/images/yasq-logo.png"
 import { AxiosError } from "axios"
 import { ErrorResponseData } from "../types/ErrorResponseData"
 import { getUserId, setUserId } from "../utils/StorageUtils"
@@ -84,20 +84,20 @@ function Home() {
 
     return (
         <Layout style={{ margin: 16 }}>
-            <Row style={{ alignItems: "center", gap: 8 }}>
+            <Row style={{ alignItems: "center", gap: 16, marginLeft: 32, marginTop: 32 }}>
                 <Image
                     src={YasqLogo}
                     preview={false}
-                    style={{ maxWidth: 82 }}
+                    style={{ maxWidth: 128 }}
                 />
-                <Title style={{ margin: 0, fontSize: "4.42em" }}>
+                <Title style={{ margin: 0, fontSize: "7em", fontWeight: 900 }}>
                     YASQ
                 </Title>
             </Row>
 
             <Col>
-                <Title level={2} style={{ margin: 0, fontWeight: 500 }}>
-                    Experience more music with your friends.
+                <Title level={2} style={{ margin: 0, fontWeight: 800 }}>
+                    Experience music with friends.
                 </Title>
 
                 <Paragraph style={{ fontSize: "1.5em" }}>
@@ -133,7 +133,7 @@ function Home() {
                     </Space.Compact>
 
                     <Row>
-                        <Button type="text" onClick={switchInputMode}>
+                        <Button type="link" onClick={switchInputMode}>
                             {createMode ? "I want to join my friends instead" : "I want to create my own room"}
                         </Button>
                     </Row>
