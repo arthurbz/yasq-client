@@ -13,6 +13,10 @@ function YouTubePlayer() {
     const [player, setPlayer] = useState<ReactYouTubePlayer | undefined>()
 
     useEffect(() => {
+        // The "g" variable is the iframe element in the DOM, so it can't be null
+        if (!player?.g)
+            return
+
         // After the player is ready, it will setIsPlaying to force the correct state
         isPlaying ? player?.playVideo() : player?.pauseVideo()
     }, [isPlaying])
@@ -30,6 +34,10 @@ function YouTubePlayer() {
         */
         player.getDuration() // Forces refresh of seekTo()
         player.seekTo(elapsedTime, true) // Seek to the room song elapsed time
+
+        if (!isPlaying)
+            player.pauseVideo()
+
         setIsPlaying(isPlaying => isPlaying) // Hacky way to force player to the correct state after the iframe is ready
     }, [player])
 

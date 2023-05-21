@@ -36,9 +36,9 @@ function ChatHistory() {
                             message={message as Action<TextMessage>}
                         />
                     else
-                        return <>
+                        return <div key={index} style={{ color: "white" }}>
                             {message.content.type}
-                        </>
+                        </div>
                 })
             }
         </div>

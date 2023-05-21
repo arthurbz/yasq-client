@@ -15,9 +15,9 @@ export interface ServerToClientEvents {
 }
 
 export interface ClientToServerEvents {
-    joinRoom: (roomId: string) => void
-    play: (roomId: string) => void
-    pause: (roomId: string) => void
+    joinRoom: (action: Action<UserJoined>, callback: () => void) => void
+    play: (action: Action<StateChanged>) => void
+    pause: (action: Action<StateChanged>) => void
     currentState: (roomId: string) => void
     sendMessage: (message: Action<TextMessage>) => void
 }

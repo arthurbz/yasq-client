@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react"
 import { Row, Col, Button, App } from "antd"
 import { PlayCircleFilled, PauseCircleFilled } from "@ant-design/icons"
 import { socket } from "../../plugins/SocketInstance"
+import dayjs from "dayjs"
 
 // Components
 import AlbumCover from "../song/AlbumCover"
@@ -16,10 +17,12 @@ import GlobalPlayerContext, { GlobalPlayerContextParams } from "../../contexts/G
 import { Volume } from "../../types/Volume"
 import { Song } from "../../types/Song"
 import { RoomState } from "../../types/Room"
+import { StateChanged } from "../../types/RoomAction"
+import { Action } from "../../types/Action"
 
 function GlobalMusicPlayer() {
     const { notification } = App.useApp()
-    const { room } = useContext(GlobalDataContext)
+    const { room, user } = useContext(GlobalDataContext)
     const [isPlaying, setIsPlaying] = useState(false)
     const [isReady, setIsReady] = useState(false)
     const [song, setSong] = useState<Song | undefined>()
@@ -67,12 +70,22 @@ function GlobalMusicPlayer() {
         if (!isReady)
             return
 
-        if (!room) {
+        if (!room || !user) {
             notification.error({ message: "It seems like you are not in a room." })
             return
         }
 
-        isPlaying ? socket.emit("pause", room.id) : socket.emit("play", room.id)
+        const action: Action<StateChanged> = {
+            roomId: room.id,
+            content: {
+                isPlaying: isPlaying,
+                type: "stateChanged",
+                user: user,
+            },
+            date: dayjs().unix()
+        }
+
+        isPlaying ? socket.emit("pause", action) : socket.emit("play", action)
     }
 
     return (

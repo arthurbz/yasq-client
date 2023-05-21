@@ -1,5 +1,5 @@
-import { useEffect, useContext } from "react"
-import { App, Layout, Row, Typography } from "antd"
+import { useState, useEffect, useContext } from "react"
+import { App, Layout, Row, Spin, Typography } from "antd"
 const { Content } = Layout
 import { useParams, useNavigate } from "react-router-dom"
 import { useMutation, useQuery } from "@tanstack/react-query"
@@ -27,21 +27,24 @@ import { CreateOrJoinRoom, JoinWithUser } from "../types/CustomReactQueryTypes"
 
 // Contexts
 import GlobalDataContext from "../contexts/GlobalDataContext"
+import dayjs from "dayjs"
+import { Action } from "../types/Action"
+import { UserJoined } from "../types/RoomAction"
 
 function Room() {
+    const { room, setRoom, user, setUser, setGlobalLoading } = useContext(GlobalDataContext)
     const { notification } = App.useApp()
     const navigate = useNavigate()
-    const { room, setRoom, user, setUser } = useContext(GlobalDataContext)
     const { id: roomId } = useParams()
     const userId = getUserId()
 
     useEffect(() => {
-        socket.on("connect", () => {
-            console.log("Socket connected!", socket.id)
-        })
+        setGlobalLoading(true)
+        socket.on("connect", () => console.log("Socket connected!", socket.id))
 
         return () => {
             socket.off("connect")
+            setGlobalLoading(false)
         }
     }, [])
 
@@ -49,13 +52,28 @@ function Room() {
         if (!room?.id)
             return
 
-        socket.emit("joinRoom", roomId)
-
         if (userId)
             mutateJoinWithUser({ userId, roomId: room.id })
         else
             mutateJoinWithRandomUser(room.id)
     }, [room])
+
+    const joinWebSocketRoom = () => {
+        if (!room || !user)
+            return
+
+        const action: Action<UserJoined> = {
+            roomId: room.id,
+            content: {
+                user: user,
+                type: "userJoined"
+            },
+            date: dayjs().unix()
+        }
+
+        // Emit joinRoom and wait for server ACK to allow interactions with the page
+        socket.emit("joinRoom", action, () => setGlobalLoading(false))
+    }
 
     const onSuccess = (data: CreateOrJoinRoom) => {
         const { participationId, roomId, userId } = data
@@ -66,7 +84,7 @@ function Room() {
         }
 
         setUserId(userId)
-        navigate(`/room/${roomId}`)
+        joinWebSocketRoom()
     }
 
     const onError = () => {

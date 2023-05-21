@@ -9,6 +9,9 @@ export interface GlobalDataContextParams {
 
     room: Room | undefined,
     setRoom: Dispatch<SetStateAction<Room | undefined>>
+
+    globalLoading: boolean,
+    setGlobalLoading: Dispatch<SetStateAction<boolean>>
 }
 
 const GlobalDataContext = createContext<GlobalDataContextParams>({
@@ -16,7 +19,10 @@ const GlobalDataContext = createContext<GlobalDataContextParams>({
     setUser: () => { },
 
     room: undefined,
-    setRoom: () => { }
+    setRoom: () => { },
+
+    globalLoading: false,
+    setGlobalLoading: () => { }
 })
 
 export default GlobalDataContext

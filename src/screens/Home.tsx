@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { App, Layout, Button, Image, Input, Row, Col, Typography, Space, Form } from "antd"
 const { Title, Text, Paragraph } = Typography
 import { useNavigate } from "react-router-dom"
@@ -9,8 +9,10 @@ import { AxiosError } from "axios"
 import { ErrorResponseData } from "../types/ErrorResponseData"
 import { getUserId, setUserId } from "../utils/StorageUtils"
 import { CreateRoom, JoinWithUser, CreateOrJoinRoom } from "../types/CustomReactQueryTypes"
+import GlobalDataContext from "../contexts/GlobalDataContext"
 
 function Home() {
+    const { setGlobalLoading } = useContext(GlobalDataContext)
     const { notification } = App.useApp()
     const navigate = useNavigate()
     const [createMode, setCreateMode] = useState(true)
@@ -23,6 +25,7 @@ function Home() {
             return
         }
 
+        setGlobalLoading(true)
         setUserId(userId)
         navigate(`/room/${roomId}`)
     }
