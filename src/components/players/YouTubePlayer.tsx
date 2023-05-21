@@ -9,20 +9,13 @@ import GlobalPlayerContext from "../../contexts/GlobalPlayerContext"
 */
 
 function YouTubePlayer() {
-    const { song, isPlaying, isReady, setIsReady, volume } = useContext(GlobalPlayerContext)
+    const { song, setIsPlaying, isPlaying, setIsReady, volume, elapsedTime } = useContext(GlobalPlayerContext)
     const [player, setPlayer] = useState<ReactYouTubePlayer | undefined>()
 
     useEffect(() => {
-        // TODO: Think of a way to "wait" for it to be ready and then do the action
-        if (!isReady)
-            return
-
+        // After the player is ready, it will setIsPlaying to force the correct state
         isPlaying ? player?.playVideo() : player?.pauseVideo()
     }, [isPlaying])
-
-    useEffect(() => {
-        setIsReady(false)
-    }, [song])
 
     useEffect(() => {
         // The "g" variable is the iframe element in the DOM, so it can't be null
@@ -32,17 +25,12 @@ function YouTubePlayer() {
         setIsReady(true)
 
         /*
-            Seek to the first second and pause it.
-            Otherwise the video could start in the middle if user was already watching it on YouTube.
-            Also need to pause it, or else the video could start playing depending on the state.
-
-            TODO:
-                Still need to find out why after changing song, its still starting from the middle,
-                like the user was already watching it.
+            TODO: Still need to find out why after changing song, its still starting from the middle
+            Seems like it's something with YouTube, like the user was already watching the video
         */
-        player.getDuration()
-        player.playVideo().seekTo(1, true).pauseVideo()
-        console.log(player.getCurrentTime())
+        player.getDuration() // Forces refresh of seekTo()
+        player.seekTo(elapsedTime, true) // Seek to the room song elapsed time
+        setIsPlaying(isPlaying => isPlaying) // Hacky way to force player to the correct state after the iframe is ready
     }, [player])
 
     useEffect(() => {

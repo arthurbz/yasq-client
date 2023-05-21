@@ -1,4 +1,5 @@
 import { User } from "./User"
+import { Song } from "./Song"
 
 interface Room {
     id: string
@@ -9,4 +10,10 @@ interface Room {
     user?: User
 }
 
-export type { Room }
+interface RoomState {
+    isPlaying: boolean
+    currentSong: Song
+    songElapsedTime: number
+}
+
+export type { Room, RoomState }

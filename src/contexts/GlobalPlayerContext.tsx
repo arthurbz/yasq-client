@@ -4,17 +4,20 @@ import { Song } from "../types/Song"
 import { Volume } from "../types/Volume"
 
 export interface GlobalPlayerContextParams {
-    isPlaying: boolean,
+    isPlaying: boolean
     setIsPlaying: Dispatch<SetStateAction<boolean>>
 
-    isReady: boolean,
-    setIsReady: Dispatch<SetStateAction<boolean>>,
+    isReady: boolean
+    setIsReady: Dispatch<SetStateAction<boolean>>
 
-    song: Song | undefined,
+    song: Song | undefined
     setSong: Dispatch<SetStateAction<Song | undefined>>
 
-    volume: Volume,
+    volume: Volume
     setVolume: Dispatch<SetStateAction<Volume>>
+
+    elapsedTime: number
+    setElapsedTime: Dispatch<SetStateAction<number>>
 }
 
 const GlobalPlayerContext = createContext<GlobalPlayerContextParams>({
@@ -28,7 +31,10 @@ const GlobalPlayerContext = createContext<GlobalPlayerContextParams>({
     setSong: () => { },
 
     volume: { value: 0, isMuted: false },
-    setVolume: () => { }
+    setVolume: () => { },
+
+    elapsedTime: 0,
+    setElapsedTime: () => { }
 })
 
 export default GlobalPlayerContext
