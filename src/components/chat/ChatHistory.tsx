@@ -1,19 +1,27 @@
 import { useState, useEffect } from "react"
 import { socket } from "../../plugins/SocketInstance"
-import { TextMessage, Message } from "../../types/Message"
+import { TextMessage, Action } from "../../types/Action"
 import ChatMessage from "./ChatMessage"
 import { RoomAction } from "../../types/RoomAction"
 
 function ChatHistory() {
-    const [messageHistory, setMessageHistory] = useState<Message<TextMessage | RoomAction>[]>([])
+    const [messageHistory, setMessageHistory] = useState<Action<TextMessage | RoomAction>[]>([])
+
+    const pushMessageToHistory = (message: Action<TextMessage | RoomAction>) => {
+        setMessageHistory(prevState => [...prevState, message])
+    }
 
     useEffect(() => {
-        socket.on("receiveMessage", (message: Message<TextMessage>) => {
-            setMessageHistory(prevState => [...prevState, message])
-        })
+        socket.on("textMessage", pushMessageToHistory)
+        socket.on("songAdded", pushMessageToHistory)
+        socket.on("userJoined", pushMessageToHistory)
+        socket.on("stateChanged", pushMessageToHistory)
 
         return () => {
-            socket.off("receiveMessage")
+            socket.off("textMessage")
+            socket.off("songAdded")
+            socket.off("userJoined")
+            socket.off("stateChanged")
         }
     }, [])
 
@@ -25,8 +33,12 @@ function ChatHistory() {
                     if (message.content.type == "textMessage")
                         return <ChatMessage
                             key={index}
-                            message={message as Message<TextMessage>}
+                            message={message as Action<TextMessage>}
                         />
+                    else
+                        return <>
+                            {message.content.type}
+                        </>
                 })
             }
         </div>

@@ -7,7 +7,7 @@ export interface TextMessage {
     type: "textMessage"
 }
 
-export interface Message<Content extends TextMessage | RoomAction> {
+export interface Action<Content extends TextMessage | RoomAction> {
     roomId: string
     content: Content
     date: number

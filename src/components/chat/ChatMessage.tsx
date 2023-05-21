@@ -1,10 +1,10 @@
 import { useState } from "react"
 import { Avatar, Card, Row, Col, Typography } from "antd"
 import dayjs from "dayjs"
-import { Message, TextMessage } from "../../types/Message"
+import { Action, TextMessage } from "../../types/Action"
 
 interface MessageProps {
-    message: Message<TextMessage>
+    message: Action<TextMessage>
 }
 
 function ChatMessage({ message }: MessageProps) {
