@@ -47,7 +47,8 @@ function GlobalMusicPlayer() {
         socket.on("pause", () => setIsPlaying(false))
         socket.on("currentState", (state: RoomState) => {
             const { currentSong, isPlaying, songElapsedTime } = state
-            console.log(`(${song?.originId}) Song: ${song?.name} Artist: ${song?.artist} Elapsed: ${songElapsedTime} Playing: ${isPlaying}`)
+            const { originId, name, artist } = currentSong
+            console.log(`(${originId}) Song: ${name} Artist: ${artist} Elapsed: ${songElapsedTime} Playing: ${isPlaying}`)
 
             setSong(currentSong)
             setElapsedTime(songElapsedTime)

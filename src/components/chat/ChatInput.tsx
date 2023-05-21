@@ -4,7 +4,7 @@ import { SendOutlined } from "@ant-design/icons"
 import { socket } from "../../plugins/SocketInstance"
 import dayjs from "dayjs"
 import GlobalDataContext from "../../contexts/GlobalDataContext"
-import { Message } from "../../types/Message"
+import { Message, TextMessage } from "../../types/Message"
 
 const MAX_MESSAGE_LENGTH = 500
 
@@ -18,10 +18,13 @@ function ChatInput() {
         if (!user || !room || !text || text.length > MAX_MESSAGE_LENGTH)
             return
 
-        const message: Message = {
-            user: user,
+        const message: Message<TextMessage> = {
             roomId: room.id,
-            content: text,
+            content: {
+                user,
+                text,
+                type: "textMessage"
+            },
             date: dayjs().unix()
         }
 
@@ -31,7 +34,7 @@ function ChatInput() {
 
     return (
         <Form form={form} onFinish={sendMessage}>
-            <Space>
+            <Space style={{ alignItems: "flex-start" }}>
                 <Form.Item name="text">
                     <Input.TextArea
                         maxLength={MAX_MESSAGE_LENGTH}

@@ -1,10 +1,14 @@
-import { User } from "./User"
+import { User } from "./User.js"
+import { RoomAction } from "./RoomAction.js"
 
-interface Message {
+export interface TextMessage {
     user: User
-    roomId: string
-    content: string
-    date: number
+    text: string
+    type: "textMessage"
 }
 
-export type { Message }
+export interface Message<Content extends TextMessage | RoomAction> {
+    roomId: string
+    content: Content
+    date: number
+}

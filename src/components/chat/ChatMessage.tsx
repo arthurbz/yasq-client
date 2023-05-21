@@ -1,15 +1,15 @@
 import { useState } from "react"
 import { Avatar, Card, Row, Col, Typography } from "antd"
 import dayjs from "dayjs"
-import { Message } from "../../types/Message"
+import { Message, TextMessage } from "../../types/Message"
 
 interface MessageProps {
-    message: Message
+    message: Message<TextMessage>
 }
 
 function ChatMessage({ message }: MessageProps) {
     const [ellipsis, setEllipsis] = useState(true)
-    const { user } = message
+    const { user, text } = message.content
 
     const avatarUrl = user ? `${import.meta.env.VITE_SERVER}${user.pfpPath}` : null
     const date = dayjs.unix(message.date)
@@ -51,7 +51,7 @@ function ChatMessage({ message }: MessageProps) {
                             overflowY: ellipsis ? "unset" : "scroll"
                         }}
                     >
-                        {message.content}
+                        {text}
                     </Typography.Paragraph>
                 </Col>
             </Card>
