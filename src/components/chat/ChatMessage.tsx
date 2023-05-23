@@ -1,20 +1,21 @@
 import { useState } from "react"
 import { Avatar, Card, Row, Col, Typography } from "antd"
 import dayjs from "dayjs"
-import { Action, TextMessage } from "../../types/Action"
+import { TextMessage } from "../../types/Action"
 
 interface MessageProps {
-    message: Action<TextMessage>
+    textMessage: TextMessage
+    date: number
 }
 
-function ChatMessage({ message }: MessageProps) {
+function ChatMessage({ textMessage, date }: MessageProps) {
+    const { user, text } = textMessage
     const [ellipsis, setEllipsis] = useState(true)
-    const { user, text } = message.content
 
     const avatarUrl = user ? `${import.meta.env.VITE_SERVER}${user.pfpPath}` : null
-    const date = dayjs.unix(message.date)
-    const includeDay = dayjs().diff(date, "days") > 1
-    const formattedDate = includeDay ? date.format("D, MMM hh:mm A") : date.format("hh:mm A")
+    const dayjsDate = dayjs.unix(date)
+    const includeDay = dayjs().diff(dayjsDate, "days") > 1
+    const formattedDate = includeDay ? dayjsDate.format("D, MMM hh:mm A") : dayjsDate.format("hh:mm A")
 
     const onExpand = () => setEllipsis(false)
 

@@ -1,8 +1,15 @@
 import { useState, useEffect } from "react"
 import { socket } from "../../plugins/SocketInstance"
+
+// Types
 import { TextMessage, Action } from "../../types/Action"
-import ChatMessage from "./ChatMessage"
 import { RoomAction } from "../../types/RoomAction"
+
+// Componentes
+import ChatMessage from "./ChatMessage"
+import SongAdded from "./roomActions/SongAdded"
+import UserJoined from "./roomActions/UserJoined"
+import StateChanged from "./roomActions/StateChanged"
 
 function ChatHistory() {
     const [messageHistory, setMessageHistory] = useState<Action<TextMessage | RoomAction>[]>([])
@@ -33,12 +40,24 @@ function ChatHistory() {
                     if (message.content.type == "textMessage")
                         return <ChatMessage
                             key={index}
-                            message={message as Action<TextMessage>}
+                            textMessage={message.content}
+                            date={message.date}
                         />
-                    else
-                        return <div key={index} style={{ color: "white" }}>
-                            {message.content.type}
-                        </div>
+                    if (message.content.type == "songAdded")
+                        return <SongAdded
+                            key={index}
+                            songAdded={message.content}
+                        />
+                    if (message.content.type == "userJoined")
+                        return <UserJoined
+                            key={index}
+                            userJoined={message.content}
+                        />
+                    if (message.content.type == "stateChanged")
+                        return <StateChanged
+                            key={index}
+                            stateChanged={message.content}
+                        />
                 })
             }
         </div>
