@@ -29,7 +29,7 @@ function ChatInput() {
         }
 
         form.resetFields()
-        socket.emit("sendMessage", message)
+        socket.emit("textMessage", message)
     }
 
     return (

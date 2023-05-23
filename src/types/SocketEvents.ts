@@ -19,5 +19,5 @@ export interface ClientToServerEvents {
     play: (action: Action<StateChanged>) => void
     pause: (action: Action<StateChanged>) => void
     currentState: (roomId: string) => void
-    sendMessage: (message: Action<TextMessage>) => void
+    textMessage: (action: Action<TextMessage>) => void
 }
