@@ -1,8 +1,8 @@
-import { useState, useEffect, useContext } from "react"
-import { App, Layout, Row, Spin, Typography } from "antd"
+import { useEffect, useContext } from "react"
+import { App, Layout, Row, Typography } from "antd"
 const { Content } = Layout
 import { useParams, useNavigate } from "react-router-dom"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { AxiosError } from "axios"
 import { axios } from "../plugins/AxiosInstance"
 import { socket } from "../plugins/SocketInstance"
@@ -36,11 +36,14 @@ function Room() {
     const { notification } = App.useApp()
     const navigate = useNavigate()
     const { id: roomId } = useParams()
+    const queryClient = useQueryClient()
     const userId = getUserId()
 
     useEffect(() => {
         setGlobalLoading(true)
-        socket.on("connect", () => console.log("Socket connected!", socket.id))
+        socket.on("connect", () => {
+            console.log("Socket connected!", socket.id)
+        })
 
         return () => {
             socket.off("connect")
@@ -49,16 +52,17 @@ function Room() {
     }, [])
 
     useEffect(() => {
-        if (!room?.id)
+        if (!roomId)
             return
 
         if (userId)
-            mutateJoinWithUser({ userId, roomId: room.id })
+            mutateJoinWithUser({ userId, roomId })
         else
-            mutateJoinWithRandomUser(room.id)
+            mutateJoinWithRandomUser(roomId)
     }, [room])
 
-    const joinWebSocketRoom = () => {
+    useEffect(() => {
+        // Once has User and Room join the socket room
         if (!room || !user)
             return
 
@@ -73,7 +77,7 @@ function Room() {
 
         // Emit joinRoom and wait for server ACK to allow interactions with the page
         socket.emit("joinRoom", action, () => setGlobalLoading(false))
-    }
+    }, [user, room])
 
     const onSuccess = (data: CreateOrJoinRoom) => {
         const { participationId, roomId, userId } = data
@@ -83,8 +87,8 @@ function Room() {
             return
         }
 
+        queryClient.invalidateQueries(["participation", "find", "room", roomId])
         setUserId(userId)
-        joinWebSocketRoom()
     }
 
     const onError = () => {
@@ -95,7 +99,7 @@ function Room() {
         queryKey: ["room", "find", roomId],
         enabled: !!roomId && typeof roomId == "string",
         staleTime: 5 * 60 * 1000,
-        retryDelay: 250,
+        retryDelay: 300,
         queryFn: async () => await axios.get(`/room/find/${roomId}`).then(response => response.data),
         onSuccess: room => setRoom(room),
         onError: data => {
@@ -105,10 +109,10 @@ function Room() {
     })
 
     useQuery<User, AxiosError<ErrorResponseData, any>>({
-        queryKey: ["room", "find", userId],
+        queryKey: ["user", "find", userId],
         enabled: !!userId,
         staleTime: 5 * 60 * 1000,
-        retryDelay: 250,
+        retryDelay: 300,
         queryFn: async () => await axios.get(`/user/find/${userId}`).then(response => response.data),
         onSuccess: user => setUser(user),
     })
