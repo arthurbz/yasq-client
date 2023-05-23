@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query"
 import { AutoComplete, Input, App } from "antd"
 import { SearchOutlined, LoadingOutlined } from "@ant-design/icons"
@@ -8,6 +8,7 @@ import OptionItem from "./OptionItem"
 import { SearchOptionSong } from "../../types/Song"
 import { Song } from "../../types/Song"
 import { ErrorResponseData } from "../../types/ErrorResponseData"
+import GlobalDataContext from "../../contexts/GlobalDataContext"
 
 interface SearchBarItemOption {
     value: string
@@ -20,6 +21,7 @@ interface SearchBarProps {
 }
 
 function SearchBar({ roomId }: SearchBarProps) {
+    const { user } = useContext(GlobalDataContext)
     const [searchQuery, setSearchQuery] = useState("")
     const [inputValue, setInputValue] = useState("")
     const [options, setOptions] = useState<SearchBarItemOption[]>([])
@@ -52,7 +54,8 @@ function SearchBar({ roomId }: SearchBarProps) {
         mutationFn: async (song: SearchOptionSong) => {
             const body = {
                 info: song.originId,
-                roomId: roomId
+                roomId: roomId,
+                userId: user?.id
             }
 
             return await axios.post("/song/add", body).then(response => response.data)
@@ -61,11 +64,7 @@ function SearchBar({ roomId }: SearchBarProps) {
             queryClient.setQueryData(
                 ["song", "find", "room", roomId],
                 (oldData: Song[] | undefined) => {
-                    const newSong: Song = {
-                        id: data.id,
-                        ...variables
-                    }
-
+                    const newSong: Song = { id: data.id, ...variables }
                     return oldData ? [...oldData, newSong] : [newSong]
                 }
             )
