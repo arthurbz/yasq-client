@@ -78,7 +78,7 @@ function GlobalMusicPlayer() {
         const action: Action<StateChanged> = {
             roomId: room.id,
             content: {
-                isPlaying: isPlaying,
+                isPlaying: !isPlaying,
                 type: "stateChanged",
                 user: user,
             },
