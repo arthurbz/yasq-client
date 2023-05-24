@@ -10,8 +10,8 @@ export interface GlobalPlayerContextParams {
     isReady: boolean
     setIsReady: Dispatch<SetStateAction<boolean>>
 
-    song: Song | undefined
-    setSong: Dispatch<SetStateAction<Song | undefined>>
+    song: Song | null
+    setSong: Dispatch<SetStateAction<Song | null>>
 
     volume: Volume
     setVolume: Dispatch<SetStateAction<Volume>>
@@ -27,7 +27,7 @@ const GlobalPlayerContext = createContext<GlobalPlayerContextParams>({
     isReady: false,
     setIsReady: () => { },
 
-    song: undefined,
+    song: null,
     setSong: () => { },
 
     volume: { value: 0, isMuted: false },

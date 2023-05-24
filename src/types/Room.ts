@@ -12,7 +12,7 @@ interface Room {
 
 interface RoomState {
     isPlaying: boolean
-    currentSong: Song
+    currentSong: Song | null
     songElapsedTime: number
 }
 

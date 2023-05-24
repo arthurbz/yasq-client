@@ -25,7 +25,7 @@ function GlobalMusicPlayer() {
     const { room, user } = useContext(GlobalDataContext)
     const [isPlaying, setIsPlaying] = useState(false)
     const [isReady, setIsReady] = useState(false)
-    const [song, setSong] = useState<Song | undefined>()
+    const [song, setSong] = useState<Song | null>(null)
     const [volume, setVolume] = useState<Volume>({ value: 15, isMuted: false })
     const [elapsedTime, setElapsedTime] = useState(0)
     const globalPlayerContextParams: GlobalPlayerContextParams = {
@@ -50,18 +50,21 @@ function GlobalMusicPlayer() {
         socket.on("pause", () => setIsPlaying(false))
         socket.on("currentState", (state: RoomState) => {
             const { currentSong, isPlaying, songElapsedTime } = state
-            const { originId, name, artist } = currentSong
-            console.log(`(${originId}) Song: ${name} Artist: ${artist} Elapsed: ${songElapsedTime} Playing: ${isPlaying}`)
 
-            setSong(currentSong)
             setElapsedTime(songElapsedTime)
             setIsPlaying(isPlaying)
+
+            if (currentSong)
+                setSong(currentSong)
+
+            console.log(`SongId: ${currentSong?.originId} \nSong: ${currentSong?.name} \nArtist: ${currentSong?.artist} \nElapsed: ${songElapsedTime} \nPlaying: ${isPlaying}`)
         })
 
         return () => {
             socket.off("play")
             socket.off("pause")
             socket.off("currentState")
+            setSong(null)
         }
     }, [room])
 
@@ -110,6 +113,7 @@ function GlobalMusicPlayer() {
                     <Button
                         type="text"
                         shape="round"
+                        disabled={!song}
                         style={{
                             display: "flex",
                             alignItems: "center",
