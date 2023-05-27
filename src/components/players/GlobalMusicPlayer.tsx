@@ -62,7 +62,7 @@ function GlobalMusicPlayer() {
                 setBuildPlayer(true)
             }
 
-            console.log(`SongId: ${currentSong?.originId} \nSong: ${currentSong?.name} \nArtist: ${currentSong?.artist} \nElapsed: ${songElapsedTime} \nPlaying: ${isPlaying}`)
+            console.debug(`SongId: ${currentSong?.originId} \nSong: ${currentSong?.name} \nArtist: ${currentSong?.artist} \nElapsed: ${songElapsedTime} \nPlaying: ${isPlaying}`)
         })
         socket.emit("currentState", room.id)
 

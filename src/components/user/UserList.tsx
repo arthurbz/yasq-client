@@ -28,13 +28,8 @@ function UserList({ roomId }: UserListProps) {
     const { data: participations, isLoading } = useQuery<Participation[], AxiosError<any, any>>({
         queryKey: ["participation", "find", "room", roomId],
         enabled: !!roomId,
-        queryFn: async () => await axios.get(`/participation/find/room/${roomId}`,).then(response => response.data),
-        onSuccess: (data) => {
-            console.log(data)
-        },
-        onError: (data) => {
-            console.log("Error", data)
-        }
+        staleTime: 1000 * 60 * 2,
+        queryFn: async () => await axios.get(`/participation/find/room/${roomId}`,).then(response => response.data)
     })
 
     const renderItem = (participation: Participation) => {

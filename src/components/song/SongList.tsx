@@ -27,13 +27,8 @@ function SongList({ roomId }: SongListProps) {
     const { data: songs, isLoading } = useQuery<Song[], AxiosError<any, any>>({
         queryKey: ["song", "find", "room", roomId],
         enabled: !!roomId,
-        queryFn: async () => await axios.get(`/song/find/room/${roomId}`,).then(response => response.data),
-        onSuccess: (data) => {
-            console.log(data)
-        },
-        onError: (data) => {
-            console.log("Error", data)
-        }
+        staleTime: 1000 * 60 * 2,
+        queryFn: async () => await axios.get(`/song/find/room/${roomId}`,).then(response => response.data)
     })
 
     const renderItem = (song: Song) => {
