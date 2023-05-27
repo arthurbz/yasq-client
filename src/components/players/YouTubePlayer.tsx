@@ -21,13 +21,6 @@ function YouTubePlayer() {
     const [player, setPlayer] = useState<ReactYouTubePlayer | null>()
 
     useEffect(() => {
-        // The "g" variable is the iframe element in the DOM, so it can't be null
-        if (!player?.g)
-            return
-
-        // After the player is ready, it will setIsPlaying to force the correct state
-        isPlaying ? player?.playVideo() : player?.pauseVideo()
-
         const interval = setInterval(() => {
             const state = player?.getPlayerState()
 
@@ -39,6 +32,15 @@ function YouTubePlayer() {
         }, 1500)
 
         return () => clearInterval(interval)
+    }, [isPlaying, player])
+
+    useEffect(() => {
+        // The "g" variable is the iframe element in the DOM, so it can't be null
+        if (!player?.g)
+            return
+
+        // After the player is ready, it will setIsPlaying to force the correct state
+        isPlaying ? player?.playVideo() : player?.pauseVideo()
     }, [isPlaying])
 
     useEffect(() => {
