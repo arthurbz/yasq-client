@@ -18,6 +18,9 @@ export interface GlobalPlayerContextParams {
 
     elapsedTime: number
     setElapsedTime: Dispatch<SetStateAction<number>>
+
+    songHasEnded: boolean
+    setSongHasEnded: Dispatch<SetStateAction<boolean>>
 }
 
 const GlobalPlayerContext = createContext<GlobalPlayerContextParams>({
@@ -34,7 +37,10 @@ const GlobalPlayerContext = createContext<GlobalPlayerContextParams>({
     setVolume: () => { },
 
     elapsedTime: 0,
-    setElapsedTime: () => { }
+    setElapsedTime: () => { },
+
+    songHasEnded: false,
+    setSongHasEnded: () => { },
 })
 
 export default GlobalPlayerContext

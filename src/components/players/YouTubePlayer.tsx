@@ -9,8 +9,16 @@ import GlobalPlayerContext from "../../contexts/GlobalPlayerContext"
 */
 
 function YouTubePlayer() {
-    const { song, setIsPlaying, isPlaying, setIsReady, volume, elapsedTime } = useContext(GlobalPlayerContext)
-    const [player, setPlayer] = useState<ReactYouTubePlayer | undefined>()
+    const {
+        song,
+        setIsPlaying,
+        isPlaying,
+        setIsReady,
+        volume,
+        elapsedTime,
+        setSongHasEnded
+    } = useContext(GlobalPlayerContext)
+    const [player, setPlayer] = useState<ReactYouTubePlayer | null>()
 
     useEffect(() => {
         // The "g" variable is the iframe element in the DOM, so it can't be null
@@ -64,15 +72,20 @@ function YouTubePlayer() {
 
     const onError = () => {
         setIsReady(false)
-        setPlayer(undefined)
+        setPlayer(null)
+    }
+
+    const onEnd = () => {
+        setSongHasEnded(true)
     }
 
     return (
         <YouTube
-            style={{ display: "none" }}
+            // style={{ display: "none" }}
             videoId={song?.originId}
             onReady={onReady}
             onError={onError}
+            onEnd={onEnd}
         />
     )
 }

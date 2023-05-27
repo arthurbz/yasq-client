@@ -28,6 +28,7 @@ function GlobalMusicPlayer() {
     const [song, setSong] = useState<Song | null>(null)
     const [volume, setVolume] = useState<Volume>({ value: 15, isMuted: false })
     const [elapsedTime, setElapsedTime] = useState(0)
+    const [songHasEnded, setSongHasEnded] = useState(false)
     const globalPlayerContextParams: GlobalPlayerContextParams = {
         isPlaying,
         setIsPlaying,
@@ -39,13 +40,14 @@ function GlobalMusicPlayer() {
         setIsReady,
         volume,
         setVolume,
+        songHasEnded,
+        setSongHasEnded
     }
 
     useEffect(() => {
         if (!room)
             return
 
-        socket.emit("currentState", room.id)
         socket.on("play", () => setIsPlaying(true))
         socket.on("pause", () => setIsPlaying(false))
         socket.on("currentState", (state: RoomState) => {
@@ -59,6 +61,7 @@ function GlobalMusicPlayer() {
 
             console.log(`SongId: ${currentSong?.originId} \nSong: ${currentSong?.name} \nArtist: ${currentSong?.artist} \nElapsed: ${songElapsedTime} \nPlaying: ${isPlaying}`)
         })
+        socket.emit("currentState", room.id)
 
         return () => {
             socket.off("play")
@@ -67,6 +70,17 @@ function GlobalMusicPlayer() {
             setSong(null)
         }
     }, [room])
+
+    useEffect(() => {
+        if (!songHasEnded || !room || !user)
+            return
+
+        socket.emit("musicHasEnded", {
+            roomId: room.id,
+            content: { user },
+            date: dayjs().unix()
+        })
+    }, [songHasEnded])
 
     const handleClick = () => {
         // TODO: Think of a way to "wait" for it to be ready and then do the action

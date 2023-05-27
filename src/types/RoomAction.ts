@@ -18,4 +18,8 @@ export interface StateChanged {
     type: "stateChanged"
 }
 
-export type RoomAction = SongAdded | UserJoined | StateChanged
+export interface MusicHasEnded {
+    user: User
+}
+
+export type RoomAction = SongAdded | UserJoined | StateChanged | MusicHasEnded
