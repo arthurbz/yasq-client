@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { Row, Col, Button, App, Tooltip } from "antd"
-import { PlayCircleFilled, PauseCircleFilled, ReloadOutlined } from "@ant-design/icons"
+import { PlayCircleFilled, PauseCircleFilled, ReloadOutlined, StepBackwardOutlined, StepForwardOutlined } from "@ant-design/icons"
 import { socket } from "../../plugins/SocketInstance"
 import dayjs from "dayjs"
 
@@ -60,6 +60,8 @@ function GlobalMusicPlayer() {
             if (currentSong) {
                 setSong(currentSong)
                 setBuildPlayer(true)
+            } else {
+                setBuildPlayer(false)
             }
 
             console.debug(`SongId: ${currentSong?.originId} \nSong: ${currentSong?.name} \nArtist: ${currentSong?.artist} \nElapsed: ${songElapsedTime} \nPlaying: ${isPlaying}`)
@@ -80,7 +82,7 @@ function GlobalMusicPlayer() {
 
         socket.emit("musicHasEnded", {
             roomId: room.id,
-            content: { user },
+            content: { user, type: "musicHasEnded" },
             date: dayjs().unix()
         })
     }, [songHasEnded])
@@ -115,6 +117,21 @@ function GlobalMusicPlayer() {
         }
     }
 
+    const changeSong = (goTo: "previous" | "next") => {
+        if (!room || !user)
+            return
+
+        socket.emit("changeSong", {
+            roomId: room.id,
+            content: {
+                user,
+                goTo,
+                type: "changeSong"
+            },
+            date: dayjs().unix()
+        })
+    }
+
     return (
         <GlobalPlayerContext.Provider value={globalPlayerContextParams}>
             <Row
@@ -134,24 +151,62 @@ function GlobalMusicPlayer() {
                 />
 
                 <Col span={4}>
-                    <Button
-                        type="text"
-                        shape="round"
-                        disabled={!song}
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            height: 64,
-                            width: 64
-                        }}
-                        onClick={handleClick}
-                    >
-                        {isPlaying
-                            ? <PauseCircleFilled style={{ fontSize: 52 }} />
-                            : <PlayCircleFilled style={{ fontSize: 52 }} />
-                        }
-                    </Button>
+                    <Tooltip title="Previous">
+                        <Button
+                            type="text"
+                            shape="round"
+                            disabled={!song}
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                height: 64,
+                                width: 64
+                            }}
+                            onClick={() => changeSong("previous")}
+                        >
+                            <StepBackwardOutlined style={{ fontSize: 52 }} />
+                        </Button>
+                    </Tooltip>
+
+                    <Tooltip title={isPlaying ? "Pause" : "Play"}>
+                        <Button
+                            type="text"
+                            shape="round"
+                            disabled={!song}
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                height: 64,
+                                width: 64
+                            }}
+                            onClick={handleClick}
+                        >
+                            {isPlaying
+                                ? <PauseCircleFilled style={{ fontSize: 52 }} />
+                                : <PlayCircleFilled style={{ fontSize: 52 }} />
+                            }
+                        </Button>
+                    </Tooltip>
+
+                    <Tooltip title="Next">
+                        <Button
+                            type="text"
+                            shape="round"
+                            disabled={!song}
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                height: 64,
+                                width: 64
+                            }}
+                            onClick={() => changeSong("next")}
+                        >
+                            <StepForwardOutlined style={{ fontSize: 52 }} />
+                        </Button>
+                    </Tooltip>
 
                     <Tooltip title="Audio not playing? Refresh the player">
                         <Button

@@ -20,6 +20,13 @@ export interface StateChanged {
 
 export interface MusicHasEnded {
     user: User
+    type: "musicHasEnded"
 }
 
-export type RoomAction = SongAdded | UserJoined | StateChanged | MusicHasEnded
+export interface ChangeSong {
+    user: User
+    goTo: "previous" | "next"
+    type: "changeSong"
+}
+
+export type RoomAction = SongAdded | UserJoined | StateChanged | MusicHasEnded | ChangeSong

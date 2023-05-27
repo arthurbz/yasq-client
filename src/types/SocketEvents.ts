@@ -1,6 +1,6 @@
 import { Action, TextMessage } from "./Action.js"
 import { RoomState } from "./Room.js"
-import { SongAdded, StateChanged, UserJoined, MusicHasEnded } from "./RoomAction.js"
+import { SongAdded, StateChanged, UserJoined, MusicHasEnded, ChangeSong } from "./RoomAction.js"
 
 export interface ServerToClientEvents {
     play: () => void
@@ -21,4 +21,5 @@ export interface ClientToServerEvents {
     currentState: (roomId: string) => void
     textMessage: (action: Action<TextMessage>) => void
     musicHasEnded: (action: Action<MusicHasEnded>) => void
+    changeSong: (action: Action<ChangeSong>) => void
 }
