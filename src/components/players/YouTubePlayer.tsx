@@ -27,6 +27,18 @@ function YouTubePlayer() {
 
         // After the player is ready, it will setIsPlaying to force the correct state
         isPlaying ? player?.playVideo() : player?.pauseVideo()
+
+        const interval = setInterval(() => {
+            const state = player?.getPlayerState()
+
+            console.debug("Room State:", isPlaying, "YouTube Player State:", state == YouTube.PlayerState.PLAYING)
+            if (isPlaying && state != YouTube.PlayerState.PLAYING) {
+                player?.playVideo()
+                console.debug("YouTube video wasn't playing, trying to force play.")
+            }
+        }, 1500)
+
+        return () => clearInterval(interval)
     }, [isPlaying])
 
     useEffect(() => {
@@ -81,6 +93,7 @@ function YouTubePlayer() {
 
     return (
         <YouTube
+            // TODO: Remember to add display: none when finished
             // style={{ display: "none" }}
             videoId={song?.originId}
             onReady={onReady}
