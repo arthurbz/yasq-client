@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react"
-import { Row, Col, Button, App } from "antd"
-import { PlayCircleFilled, PauseCircleFilled } from "@ant-design/icons"
+import { Row, Col, Button, App, Tooltip } from "antd"
+import { PlayCircleFilled, PauseCircleFilled, ReloadOutlined } from "@ant-design/icons"
 import { socket } from "../../plugins/SocketInstance"
 import dayjs from "dayjs"
 
@@ -29,6 +29,7 @@ function GlobalMusicPlayer() {
     const [volume, setVolume] = useState<Volume>({ value: 15, isMuted: false })
     const [elapsedTime, setElapsedTime] = useState(0)
     const [songHasEnded, setSongHasEnded] = useState(false)
+    const [buildPlayer, setBuildPlayer] = useState(false)
     const globalPlayerContextParams: GlobalPlayerContextParams = {
         isPlaying,
         setIsPlaying,
@@ -56,8 +57,10 @@ function GlobalMusicPlayer() {
             setElapsedTime(songElapsedTime)
             setIsPlaying(isPlaying)
 
-            if (currentSong)
+            if (currentSong) {
                 setSong(currentSong)
+                setBuildPlayer(true)
+            }
 
             console.log(`SongId: ${currentSong?.originId} \nSong: ${currentSong?.name} \nArtist: ${currentSong?.artist} \nElapsed: ${songElapsedTime} \nPlaying: ${isPlaying}`)
         })
@@ -105,6 +108,13 @@ function GlobalMusicPlayer() {
         isPlaying ? socket.emit("pause", action) : socket.emit("play", action)
     }
 
+    const reloadPlayer = () => {
+        if (room) {
+            setBuildPlayer(false)
+            socket.emit("currentState", room.id)
+        }
+    }
+
     return (
         <GlobalPlayerContext.Provider value={globalPlayerContextParams}>
             <Row
@@ -142,13 +152,31 @@ function GlobalMusicPlayer() {
                             : <PlayCircleFilled style={{ fontSize: 52 }} />
                         }
                     </Button>
+
+                    <Tooltip title="Audio not playing? Refresh the player">
+                        <Button
+                            type="text"
+                            shape="round"
+                            disabled={!song}
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                height: 24,
+                                width: 24
+                            }}
+                            onClick={reloadPlayer}
+                        >
+                            <ReloadOutlined style={{ fontSize: 18 }} />
+                        </Button>
+                    </Tooltip>
                 </Col>
 
                 <Col span={4}>
                     <VolumeSlider />
                 </Col>
 
-                <YouTubePlayer />
+                {buildPlayer && <YouTubePlayer />}
             </Row>
         </GlobalPlayerContext.Provider>
     )
