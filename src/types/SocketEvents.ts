@@ -12,6 +12,7 @@ export interface ServerToClientEvents {
     songAdded: (action: Action<SongAdded>) => void
     userJoined: (action: Action<UserJoined>) => void
     stateChanged: (action: Action<StateChanged>) => void
+    songChanged: (action: Action<ChangeSong>) => void
 }
 
 export interface ClientToServerEvents {

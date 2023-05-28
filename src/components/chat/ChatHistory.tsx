@@ -10,6 +10,7 @@ import ChatMessage from "./ChatMessage"
 import SongAdded from "./roomActions/SongAdded"
 import UserJoined from "./roomActions/UserJoined"
 import StateChanged from "./roomActions/StateChanged"
+import ChangeSong from "./roomActions/SongChanged"
 
 function ChatHistory() {
     const [messageHistory, setMessageHistory] = useState<Action<TextMessage | RoomAction>[]>([])
@@ -23,12 +24,14 @@ function ChatHistory() {
         socket.on("songAdded", pushMessageToHistory)
         socket.on("userJoined", pushMessageToHistory)
         socket.on("stateChanged", pushMessageToHistory)
+        socket.on("songChanged", pushMessageToHistory)
 
         return () => {
             socket.off("textMessage")
             socket.off("songAdded")
             socket.off("userJoined")
             socket.off("stateChanged")
+            socket.off("songChanged")
         }
     }, [])
 
@@ -57,6 +60,11 @@ function ChatHistory() {
                         return <StateChanged
                             key={index}
                             stateChanged={message.content}
+                        />
+                    if (message.content.type == "changeSong")
+                        return <ChangeSong
+                            key={index}
+                            changeSong={message.content}
                         />
                 })
             }
