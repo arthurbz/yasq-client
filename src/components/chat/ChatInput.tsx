@@ -32,8 +32,13 @@ function ChatInput() {
         socket.emit("textMessage", message)
     }
 
+    const onKeyDown = (event: any) => {
+        if (event.key === "Enter" && !event.shiftKey)
+            form.submit()
+    }
+
     return (
-        <Form form={form} onFinish={sendMessage}>
+        <Form form={form} onFinish={sendMessage} onKeyDown={onKeyDown}>
             <Space style={{ alignItems: "flex-start" }}>
                 <Form.Item name="text">
                     <Input.TextArea
