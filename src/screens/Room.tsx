@@ -52,13 +52,13 @@ function Room() {
     }, [])
 
     useEffect(() => {
-        if (!roomId)
+        if (!room)
             return
 
         if (userId)
-            mutateJoinWithUser({ userId, roomId })
+            mutateJoinWithUser({ userId, roomId: room.id })
         else
-            mutateJoinWithRandomUser(roomId)
+            mutateJoinWithRandomUser(room.id)
     }, [room])
 
     useEffect(() => {
@@ -77,7 +77,7 @@ function Room() {
 
         // Emit joinRoom and wait for server ACK to allow interactions with the page
         socket.emit("joinRoom", action, () => setGlobalLoading(false))
-    }, [user, room])
+    }, [user])
 
     const onSuccess = (data: CreateOrJoinRoom) => {
         const { participationId, roomId, userId } = data
