@@ -1,5 +1,5 @@
-import { useEffect, useContext } from "react"
-import { App, Layout, Row, Typography } from "antd"
+import { useState, useEffect, useContext } from "react"
+import { App, Button, Layout, Popconfirm, Row, Typography } from "antd"
 const { Content } = Layout
 import { useParams, useNavigate } from "react-router-dom"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -22,6 +22,7 @@ import ChatHistory from "../components/chat/ChatHistory"
 // Types
 import { Room } from "../types/Room"
 import { User } from "../types/User"
+import { Participation } from "../types/Participation"
 import { ErrorResponseData } from "../types/ErrorResponseData"
 import { CreateOrJoinRoom, JoinWithUser } from "../types/CustomReactQueryTypes"
 
@@ -30,14 +31,16 @@ import GlobalDataContext from "../contexts/GlobalDataContext"
 import dayjs from "dayjs"
 import { Action } from "../types/Action"
 import { UserJoined } from "../types/RoomAction"
+import { LogoutOutlined } from "@ant-design/icons"
 
 function Room() {
-    const { room, setRoom, user, setUser, setGlobalLoading } = useContext(GlobalDataContext)
+    const { room, setRoom, user, setUser, participation, setParticipation, setGlobalLoading } = useContext(GlobalDataContext)
     const { notification } = App.useApp()
     const navigate = useNavigate()
     const { id: roomId } = useParams()
     const queryClient = useQueryClient()
     const userId = getUserId()
+    const [participationId, setParticipationId] = useState<string | null>(null)
 
     useEffect(() => {
         setGlobalLoading(true)
@@ -76,7 +79,7 @@ function Room() {
         }
 
         // Emit joinRoom and wait for server ACK to allow interactions with the page
-        socket.emit("joinRoom", action, () => setGlobalLoading(false))
+        socket.emit("joinRoom", action, () => setGlobalLoading(false)).timeout(5000)
     }, [user])
 
     const onSuccess = (data: CreateOrJoinRoom) => {
@@ -89,6 +92,7 @@ function Room() {
 
         queryClient.invalidateQueries(["participation", "find", "room", roomId])
         setUserId(userId)
+        setParticipationId(participationId)
     }
 
     const onError = () => {
@@ -117,6 +121,15 @@ function Room() {
         onSuccess: user => setUser(user),
     })
 
+    useQuery<Participation, AxiosError<ErrorResponseData, any>>({
+        queryKey: ["participation", "find", participationId],
+        enabled: !!participationId,
+        staleTime: 15 * 60 * 1000,
+        retryDelay: 1000,
+        queryFn: async () => await axios.get(`/participation/find/${participationId}`).then(response => response.data),
+        onSuccess: participation => setParticipation(participation),
+    })
+
     const { mutate: mutateJoinWithRandomUser } = useMutation<CreateOrJoinRoom, AxiosError<ErrorResponseData, any>, string>({
         mutationKey: ["participation", "join", "random"],
         mutationFn: async roomId => await axios.post("/participation/join/random", { roomId }).then(response => response.data),
@@ -131,6 +144,21 @@ function Room() {
         onError: onError
     })
 
+    const { mutate: mutateLeaveRoom } = useMutation<unknown, AxiosError<ErrorResponseData, any>>({
+        mutationKey: ["participation", "leave"],
+        mutationFn: async () => {
+            console.log(participation)
+            if (!participation) return
+            await axios.delete(`/participation/leave/${participation?.id}`)
+                .then(response => response.data)
+        },
+        onSuccess: () => {
+            navigate("/")
+            socket.disconnect()
+            queryClient.clear()
+        }
+    })
+
     return (
         <Layout>
             <Content>
@@ -138,6 +166,17 @@ function Room() {
                     <Typography.Title ellipsis style={{ margin: 8 }}>
                         {room?.name}
                     </Typography.Title>
+
+                    <Popconfirm
+                        title="Are you sure you wanna leave this room?"
+                        okText="Leave"
+                        onConfirm={() => mutateLeaveRoom()}
+                    >
+                        <Button
+                            type="default"
+                            icon={<LogoutOutlined />}
+                        />
+                    </Popconfirm>
 
                     <SearchBar roomId={roomId} />
 
