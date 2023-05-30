@@ -11,14 +11,26 @@ import GlobalDataContext from "./contexts/GlobalDataContext"
 // Types
 import { User } from "./types/User"
 import { Room } from "./types/Room"
+import { Participation } from "./types/Participation"
 
 function App() {
-    const [user, setUser] = useState<User | undefined>()
-    const [room, setRoom] = useState<Room | undefined>()
+    const [user, setUser] = useState<User | undefined>(undefined)
+    const [room, setRoom] = useState<Room | undefined>(undefined)
+    const [participation, setParticipation] = useState<Participation | undefined>(undefined)
     const [globalLoading, setGlobalLoading] = useState(false)
+    const globalDataContextValues = {
+        room,
+        setRoom,
+        user,
+        setUser,
+        participation,
+        setParticipation,
+        globalLoading,
+        setGlobalLoading
+    }
 
     return (
-        <GlobalDataContext.Provider value={{ room, setRoom, user, setUser, globalLoading, setGlobalLoading }}>
+        <GlobalDataContext.Provider value={globalDataContextValues}>
             <ConfigProvider theme={theme}>
                 <Layout style={{ minWidth: "100vw", minHeight: "100vh" }}>
                     <Spin spinning={globalLoading} style={{ fontSize: "92em" }}>
