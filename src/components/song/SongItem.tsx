@@ -1,7 +1,7 @@
 import { Row, Col, Typography } from "antd"
-import { theme } from "../../themes/AppThemes"
 import { Song } from "../../types/Song"
 import AlbumCover from "./AlbumCover"
+import "./SongItemStyles.css"
 
 interface SongProps {
     song: Song
@@ -13,12 +13,13 @@ function SongItem({ song, isPlaying }: SongProps) {
 
     return (
         <Row
+            className={isPlaying ? "ripple" : ""}
             wrap={false}
             gutter={16}
             style={{
                 width: "100%",
-                border: isPlaying ? `3px ${theme.token?.colorPrimary} solid` : "",
-                borderRadius: 8
+                borderRadius: 6,
+                padding: 2
             }}
         >
             <AlbumCover

@@ -1,17 +1,19 @@
-import { useEffect } from "react"
-import { List } from "antd"
+import { useContext, useEffect } from "react"
+import { List, Row } from "antd"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { axios } from "../../plugins/AxiosInstance"
 import { AxiosError } from "axios"
 import { socket } from "../../plugins/SocketInstance"
 import { Song } from "../../types/Song"
 import SongItem from "./SongItem"
+import GlobalDataContext from "../../contexts/GlobalDataContext"
 
 interface SongListProps {
     roomId?: string
 }
 
 function SongList({ roomId }: SongListProps) {
+    const { song: currentSong } = useContext(GlobalDataContext)
     const queryClient = useQueryClient()
 
     useEffect(() => {
@@ -28,15 +30,18 @@ function SongList({ roomId }: SongListProps) {
         queryKey: ["song", "find", "room", roomId],
         enabled: !!roomId,
         staleTime: 1000 * 60 * 2,
-        queryFn: async () => await axios.get(`/song/find/room/${roomId}`,).then(response => response.data)
+        queryFn: async () => await axios.get(`/song/find/room/${roomId}`).then(response => response.data)
     })
 
     const renderItem = (song: Song) => {
         return (
-            <SongItem
-                key={song.id}
-                song={song}
-            />
+            <Row style={{ display: "flex", justifyContent: "center", padding: 8, width: "100%" }}>
+                <SongItem
+                    key={song.id}
+                    song={song}
+                    isPlaying={currentSong?.id === song.id}
+                />
+            </Row>
         )
     }
 
@@ -46,7 +51,7 @@ function SongList({ roomId }: SongListProps) {
             loading={isLoading}
             dataSource={songs}
             renderItem={renderItem}
-            style={{ height: "100%", overflowY: "auto" }}
+            style={{ height: "100%", overflowY: "auto", width: 300 }}
         />
     )
 }

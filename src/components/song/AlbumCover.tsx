@@ -11,7 +11,7 @@ interface AlbumCoverProps {
 function AlbumCover({ thumbnail, name, height, width }: AlbumCoverProps) {
     let element: ReactNode
     const commonStyles: CSSProperties = {
-        borderRadius: 8,
+        borderRadius: 4,
         height: height,
         width: width,
     }
