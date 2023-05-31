@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { createContext, Dispatch, SetStateAction } from "react"
-import { Song } from "../types/Song"
 import { Volume } from "../types/Volume"
 
 export interface GlobalPlayerContextParams {
@@ -9,9 +8,6 @@ export interface GlobalPlayerContextParams {
 
     isReady: boolean
     setIsReady: Dispatch<SetStateAction<boolean>>
-
-    song: Song | null
-    setSong: Dispatch<SetStateAction<Song | null>>
 
     volume: Volume
     setVolume: Dispatch<SetStateAction<Volume>>
@@ -29,9 +25,6 @@ const GlobalPlayerContext = createContext<GlobalPlayerContextParams>({
 
     isReady: false,
     setIsReady: () => { },
-
-    song: null,
-    setSong: () => { },
 
     volume: { value: 0, isMuted: false },
     setVolume: () => { },

@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react"
 import YouTube, { YouTubeEvent, YouTubePlayer as ReactYouTubePlayer } from "react-youtube"
 import GlobalPlayerContext from "../../contexts/GlobalPlayerContext"
+import GlobalDataContext from "../../contexts/GlobalDataContext"
 
 /*
     Help:
@@ -9,8 +10,8 @@ import GlobalPlayerContext from "../../contexts/GlobalPlayerContext"
 */
 
 function YouTubePlayer() {
+    const { song } = useContext(GlobalDataContext)
     const {
-        song,
         setIsPlaying,
         isPlaying,
         setIsReady,

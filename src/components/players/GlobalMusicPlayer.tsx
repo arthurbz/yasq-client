@@ -15,17 +15,15 @@ import GlobalPlayerContext, { GlobalPlayerContextParams } from "../../contexts/G
 
 // Types
 import { Volume } from "../../types/Volume"
-import { Song } from "../../types/Song"
 import { RoomState } from "../../types/Room"
 import { StateChanged } from "../../types/RoomAction"
 import { Action } from "../../types/Action"
 
 function GlobalMusicPlayer() {
     const { notification } = App.useApp()
-    const { room, user } = useContext(GlobalDataContext)
+    const { room, user, song, setSong } = useContext(GlobalDataContext)
     const [isPlaying, setIsPlaying] = useState(false)
     const [isReady, setIsReady] = useState(false)
-    const [song, setSong] = useState<Song | null>(null)
     const [volume, setVolume] = useState<Volume>({ value: 15, isMuted: false })
     const [elapsedTime, setElapsedTime] = useState(0)
     const [songHasEnded, setSongHasEnded] = useState(false)
@@ -33,8 +31,6 @@ function GlobalMusicPlayer() {
     const globalPlayerContextParams: GlobalPlayerContextParams = {
         isPlaying,
         setIsPlaying,
-        song,
-        setSong,
         elapsedTime,
         setElapsedTime,
         isReady,
@@ -72,7 +68,7 @@ function GlobalMusicPlayer() {
             socket.off("play")
             socket.off("pause")
             socket.off("currentState")
-            setSong(null)
+            setSong(undefined)
         }
     }, [room])
 
