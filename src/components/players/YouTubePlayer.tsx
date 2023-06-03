@@ -96,8 +96,7 @@ function YouTubePlayer() {
 
     return (
         <YouTube
-            // TODO: Remember to add display: none when finished
-            // style={{ display: "none" }}
+            style={{ display: "none" }}
             videoId={song?.originId}
             onReady={onReady}
             onError={onError}

@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react"
 import { App, Button, Layout, Popconfirm, Row, Typography } from "antd"
-const { Content } = Layout
+const { Content, Footer } = Layout
 import { useParams, useNavigate } from "react-router-dom"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { AxiosError } from "axios"
@@ -191,11 +191,11 @@ function Room() {
                     <ChatHistory />
                     <ChatInput />
                 </Row>
-
-                <Row style={{ padding: 8 }}>
-                    <GlobalMusicPlayer />
-                </Row>
             </Content>
+
+            <Footer style={{ padding: 0, position: "sticky", bottom: 0 }}>
+                <GlobalMusicPlayer />
+            </Footer>
         </Layout>
     )
 }

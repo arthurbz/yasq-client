@@ -36,7 +36,7 @@ function App() {
     return (
         <GlobalDataContext.Provider value={globalDataContextValues}>
             <ConfigProvider theme={theme}>
-                <Layout style={{ minWidth: "100vw", minHeight: "100vh" }}>
+                <Layout style={{ width: "100vw", height: "100vh" }}>
                     <Spin spinning={globalLoading} style={{ fontSize: "92em" }}>
                         <RouterProvider router={router} />
                     </Spin>

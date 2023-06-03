@@ -1,6 +1,7 @@
 import { Col, Row, Slider, Button, Tooltip } from "antd"
-import { SoundTwoTone, SoundOutlined } from "@ant-design/icons"
+import { SoundOutlined } from "@ant-design/icons"
 import { useContext } from "react"
+import { theme } from "../../themes/AppThemes"
 import GlobalPlayerContext from "../../contexts/GlobalPlayerContext"
 
 function VolumeSlider() {
@@ -35,11 +36,12 @@ function VolumeSlider() {
                             justifyContent: "center",
                             height: 32,
                             width: 32,
-                            fontSize: 20
+                            fontSize: 20,
+                            color: volume.isMuted ? "red" : theme.token?.colorPrimary
                         }}
                         onClick={handleClick}
                     >
-                        {volume.isMuted ? <SoundOutlined /> : <SoundTwoTone />}
+                        <SoundOutlined />
                     </Button>
                 </Tooltip>
             </Col>
@@ -50,6 +52,7 @@ function VolumeSlider() {
                     value={volume.isMuted ? 0 : volume.value}
                     defaultValue={volume.value}
                     onChange={onChange}
+                    trackStyle={{ backgroundColor: theme.token?.colorPrimary, opacity: 0.7 }}
                 />
             </Col>
         </Row>

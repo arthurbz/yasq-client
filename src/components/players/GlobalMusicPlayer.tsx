@@ -1,5 +1,5 @@
-import { useContext, useEffect, useState } from "react"
-import { Row, Col, Button, App, Tooltip } from "antd"
+import { CSSProperties, useContext, useEffect, useState } from "react"
+import { Row, Col, Button, App, Tooltip, Typography } from "antd"
 import { PlayCircleFilled, PauseCircleFilled, ReloadOutlined, StepBackwardOutlined, StepForwardOutlined } from "@ant-design/icons"
 import { socket } from "../../plugins/SocketInstance"
 import dayjs from "dayjs"
@@ -135,102 +135,110 @@ function GlobalMusicPlayer() {
                     width: "100%",
                     borderRadius: 8,
                     overflow: "hidden",
-                    padding: 16
+                    padding: 16,
                 }}
-                gutter={16}
+                gutter={32}
             >
-                <AlbumCover
-                    thumbnail={song?.thumbnail}
-                    name={song?.name}
-                    height={256}
-                    width={256}
-                />
+                {buildPlayer && <YouTubePlayer />}
 
                 <Col span={4}>
-                    <Tooltip title="Previous">
-                        <Button
-                            type="text"
-                            shape="round"
-                            disabled={!song}
-                            style={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                height: 64,
-                                width: 64
-                            }}
-                            onClick={() => changeSong("previous")}
-                        >
-                            <StepBackwardOutlined style={{ fontSize: 52 }} />
-                        </Button>
-                    </Tooltip>
-
-                    <Tooltip title={isPlaying ? "Pause" : "Play"}>
-                        <Button
-                            type="text"
-                            shape="round"
-                            disabled={!song}
-                            style={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                height: 64,
-                                width: 64
-                            }}
-                            onClick={handleClick}
-                        >
-                            {isPlaying
-                                ? <PauseCircleFilled style={{ fontSize: 52 }} />
-                                : <PlayCircleFilled style={{ fontSize: 52 }} />
-                            }
-                        </Button>
-                    </Tooltip>
-
-                    <Tooltip title="Next">
-                        <Button
-                            type="text"
-                            shape="round"
-                            disabled={!song}
-                            style={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                height: 64,
-                                width: 64
-                            }}
-                            onClick={() => changeSong("next")}
-                        >
-                            <StepForwardOutlined style={{ fontSize: 52 }} />
-                        </Button>
-                    </Tooltip>
-
-                    <Tooltip title="Audio not playing? Refresh the player">
-                        <Button
-                            type="text"
-                            shape="round"
-                            disabled={!song}
-                            style={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                height: 24,
-                                width: 24
-                            }}
-                            onClick={reloadPlayer}
-                        >
-                            <ReloadOutlined style={{ fontSize: 18 }} />
-                        </Button>
-                    </Tooltip>
+                    <AlbumCover
+                        thumbnail={song?.thumbnail}
+                        name={song?.name}
+                        height={256}
+                        width={256}
+                    />
                 </Col>
 
-                <Col span={4}>
+                <Col>
+                    <Row style={{ marginTop: 16 }}>
+                        <Col>
+                            <Typography.Title level={3} ellipsis style={{ margin: 0, fontWeight: "bolder" }}>
+                                {song?.name}
+                            </Typography.Title>
+
+                            <Typography.Title level={4} ellipsis style={{ margin: 0, color: "grey" }}>
+                                {song?.artist}
+                            </Typography.Title>
+                        </Col>
+                    </Row>
+
+                    <Row gutter={16} style={{ alignItems: "center" }}>
+                        <Col>
+                            <Tooltip title="Previous">
+                                <Button
+                                    type="text"
+                                    shape="round"
+                                    disabled={!song}
+                                    style={iconButtonStyles}
+                                    onClick={() => changeSong("previous")}
+                                >
+                                    <StepBackwardOutlined style={{ fontSize: 52 }} />
+                                </Button>
+                            </Tooltip>
+                        </Col>
+
+                        <Col>
+                            <Tooltip title={isPlaying ? "Pause" : "Play"}>
+                                <Button
+                                    type="text"
+                                    shape="round"
+                                    disabled={!song}
+                                    style={iconButtonStyles}
+                                    onClick={handleClick}
+                                >
+                                    {isPlaying
+                                        ? <PauseCircleFilled style={{ fontSize: 52 }} />
+                                        : <PlayCircleFilled style={{ fontSize: 52 }} />
+                                    }
+                                </Button>
+                            </Tooltip>
+                        </Col>
+
+                        <Col>
+                            <Tooltip title="Next">
+                                <Button
+                                    type="text"
+                                    shape="round"
+                                    disabled={!song}
+                                    style={iconButtonStyles}
+                                    onClick={() => changeSong("next")}
+                                >
+                                    <StepForwardOutlined style={{ fontSize: 52 }} />
+                                </Button>
+                            </Tooltip>
+                        </Col>
+
+                        <Col>
+                            <Tooltip title="Refresh player" mouseEnterDelay={0.7}>
+                                <Button
+                                    type="text"
+                                    shape="round"
+                                    disabled={!song}
+                                    style={{ ...iconButtonStyles, width: 32, height: 32 }}
+                                    onClick={reloadPlayer}
+                                >
+                                    <ReloadOutlined style={{ fontSize: 18 }} />
+                                </Button>
+                            </Tooltip>
+                        </Col>
+                    </Row>
+                </Col>
+
+                <Col span={4} style={{ alignSelf: "center" }}>
                     <VolumeSlider />
                 </Col>
-
-                {buildPlayer && <YouTubePlayer />}
             </Row>
         </GlobalPlayerContext.Provider>
     )
+}
+
+const iconButtonStyles: CSSProperties = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    height: 64,
+    width: 64
 }
 
 export default GlobalMusicPlayer
