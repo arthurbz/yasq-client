@@ -1,11 +1,14 @@
 import { useState, useEffect, useContext } from "react"
-import { App, Button, Layout, Popconfirm, Row, Typography } from "antd"
+import { LogoutOutlined, ShareAltOutlined } from "@ant-design/icons"
+import { App, Button, Layout, Popconfirm, Row, Col, Image, Typography } from "antd"
 const { Content, Footer } = Layout
 import { useParams, useNavigate } from "react-router-dom"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { AxiosError } from "axios"
 import { axios } from "../plugins/AxiosInstance"
 import { socket } from "../plugins/SocketInstance"
+
+import YasqLogo from "../assets/images/yasq-logo.png"
 
 // Utils
 import { getUserId, setUserId } from "../utils/StorageUtils"
@@ -31,11 +34,10 @@ import GlobalDataContext from "../contexts/GlobalDataContext"
 import dayjs from "dayjs"
 import { Action } from "../types/Action"
 import { UserJoined } from "../types/RoomAction"
-import { LogoutOutlined } from "@ant-design/icons"
 
 function Room() {
     const { room, setRoom, user, setUser, participation, setParticipation, setGlobalLoading } = useContext(GlobalDataContext)
-    const { notification } = App.useApp()
+    const { notification, message } = App.useApp()
     const navigate = useNavigate()
     const { id: roomId } = useParams()
     const queryClient = useQueryClient()
@@ -159,28 +161,82 @@ function Room() {
         }
     })
 
+    const shareRoom = () => {
+        navigator.clipboard.writeText(window.location.href)
+        message.success("Link copied to clipboard!")
+    }
+
     return (
         <Layout>
-            <Content>
-                <Row style={{ alignItems: "center" }}>
-                    <Typography.Title ellipsis style={{ margin: 8 }}>
-                        {room?.name}
-                    </Typography.Title>
-
-                    <Popconfirm
-                        title="Are you sure you wanna leave this room?"
-                        okText="Leave"
-                        onConfirm={() => mutateLeaveRoom()}
+            <Content style={{ overflow: "hidden" }}>
+                <Row align="middle" gutter={[32, 16]} style={{ padding: 32 }}>
+                    <Col
+                        xs={{ span: 6, order: 1 }}
+                        sm={{ span: 15, order: 1 }}
+                        md={{ span: 6, order: 1 }}
+                        lg={{ span: 6, order: 1 }}
                     >
-                        <Button
-                            type="default"
-                            icon={<LogoutOutlined />}
-                        />
-                    </Popconfirm>
+                        <Row justify="start" align="middle" gutter={16}>
+                            <Col xs={24} sm={4} md={6} lg={6} xl={6} xxl={4}>
+                                <Image
+                                    src={YasqLogo}
+                                    preview={false}
+                                    style={{ minWidth: 42, maxWidth: 64 }}
+                                />
+                            </Col>
 
-                    <SearchBar roomId={roomId} />
+                            <Col xs={0} sm={20} md={18} lg={18} xl={18} xxl={20} style={{ textAlign: "start" }}>
+                                <Typography.Title ellipsis style={{ margin: 0, marginRight: 16 }}>
+                                    {room?.name}
+                                </Typography.Title>
+                            </Col>
+                        </Row>
+                    </Col>
 
-                    <UserProfileCard user={user} />
+                    <Col
+                        xs={{ span: 24, order: 3 }}
+                        sm={{ span: 24, order: 3 }}
+                        md={{ span: 12, order: 2 }}
+                        lg={{ span: 12, order: 2 }}
+                    >
+                        <SearchBar roomId={roomId} />
+                    </Col>
+
+                    <Col
+                        xs={{ span: 18, order: 2 }}
+                        sm={{ span: 9, order: 2 }}
+                        md={{ span: 6, order: 3 }}
+                        lg={{ span: 6, order: 3 }}
+                        xl={{ span: 3, order: 3, offset: 3 }}
+                        xxl={{ span: 3, order: 3, offset: 3 }}
+                    >
+                        <Row align="middle" justify="end" gutter={16}>
+                            <Col span={8}>
+                                <UserProfileCard user={user} />
+                            </Col>
+
+                            <Col span={8} style={{ textAlign: "center" }}>
+                                <Button
+                                    type="link"
+                                    icon={<ShareAltOutlined />}
+                                    onClick={shareRoom}
+                                />
+                            </Col>
+
+                            <Col span={8} style={{ textAlign: "center" }}>
+                                <Popconfirm
+                                    title="Are you sure you wanna leave this room?"
+                                    okText="Leave"
+                                    onConfirm={() => mutateLeaveRoom()}
+                                >
+                                    <Button
+                                        type="link"
+                                        icon={<LogoutOutlined />}
+                                    />
+                                </Popconfirm>
+                            </Col>
+                        </Row>
+                    </Col>
                 </Row>
 
                 <Row style={{ height: 500 }}>
