@@ -98,12 +98,12 @@ function SearchBar({ roomId }: SearchBarProps) {
             value={inputValue}
             onSelect={onSelect}
             onChange={onChange}
+            style={{ width: "100%" }}
         >
             <Input
                 placeholder="Search"
                 prefix={isFetching ? <LoadingOutlined spin /> : <SearchOutlined />}
-                size="large"
-                style={{ height: 48 }}
+                style={{ height: 56, width: "100%", fontSize: "1.4em" }}
             />
         </AutoComplete>
     )

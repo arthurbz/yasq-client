@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react"
 import { LogoutOutlined, ShareAltOutlined } from "@ant-design/icons"
-import { App, Button, Layout, Popconfirm, Row, Col, Image, Typography } from "antd"
+import { App, Button, Layout, Popconfirm, Row, Col, Image, Typography, Tooltip } from "antd"
 const { Content, Footer } = Layout
 import { useParams, useNavigate } from "react-router-dom"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -216,11 +216,15 @@ function Room() {
                             </Col>
 
                             <Col span={8} style={{ textAlign: "center" }}>
-                                <Button
-                                    type="link"
-                                    icon={<ShareAltOutlined />}
-                                    onClick={shareRoom}
-                                />
+                                <Tooltip title="Share this room." mouseEnterDelay={1}>
+                                    <Button
+                                        type="link"
+                                        size="large"
+                                        style={{ fontSize: "1.4em", alignItems: "center" }}
+                                        icon={<ShareAltOutlined />}
+                                        onClick={shareRoom}
+                                    />
+                                </Tooltip>
                             </Col>
 
                             <Col span={8} style={{ textAlign: "center" }}>
@@ -231,6 +235,8 @@ function Room() {
                                 >
                                     <Button
                                         type="link"
+                                        size="large"
+                                        style={{ fontSize: "1.4em", alignItems: "center" }}
                                         icon={<LogoutOutlined />}
                                     />
                                 </Popconfirm>
