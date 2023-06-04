@@ -17,9 +17,19 @@ function UserJoined({ userJoined }: UserJoinedProps) {
                         size={"default"}
                         src={avatarUrl}
                     />
-                    <Typography.Text ellipsis>
+
+                    <Typography.Paragraph
+                        style={{
+                            margin: 0,
+                            maxHeight: 128,
+                            maxWidth: 300,
+                            textAlign: "justify",
+                            textJustify: "inter-word",
+                            overflowY: "hidden"
+                        }}
+                    >
                         {user.name} has joined the room.
-                    </Typography.Text>
+                    </Typography.Paragraph>
                 </Row>
             </Col>
         </Card>

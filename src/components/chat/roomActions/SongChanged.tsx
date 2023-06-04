@@ -17,9 +17,19 @@ function ChangeSong({ changeSong }: ChangeSongProps) {
                         size={"default"}
                         src={avatarUrl}
                     />
-                    <Typography.Text ellipsis>
+
+                    <Typography.Paragraph
+                        style={{
+                            margin: 0,
+                            maxHeight: 128,
+                            maxWidth: 300,
+                            textAlign: "justify",
+                            textJustify: "inter-word",
+                            overflowY: "hidden"
+                        }}
+                    >
                         {user.name} changed to the <b>{goTo} song!</b>
-                    </Typography.Text>
+                    </Typography.Paragraph>
                 </Row>
             </Col>
         </Card>

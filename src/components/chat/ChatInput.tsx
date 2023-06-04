@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import { Space, Input, Button, Form } from "antd"
+import { Row, Col, Input, Button, Form } from "antd"
 import { SendOutlined } from "@ant-design/icons"
 import { socket } from "../../plugins/SocketInstance"
 import dayjs from "dayjs"
@@ -39,26 +39,46 @@ function ChatInput() {
 
     return (
         <Form form={form} onFinish={sendMessage} onKeyDown={onKeyDown}>
-            <Space style={{ alignItems: "flex-start" }}>
-                <Form.Item name="text">
-                    <Input.TextArea
-                        maxLength={MAX_MESSAGE_LENGTH}
-                        placeholder="Message your friends"
-                        autoSize={{ minRows: 1, maxRows: 5 }}
-                    />
-                </Form.Item>
+            <Row gutter={16} align="bottom">
+                <Col
+                    xs={{ span: 14, order: 1 }}
+                    sm={{ span: 16, order: 1 }}
+                    md={{ span: 16, order: 1 }}
+                    lg={{ span: 16, order: 1 }}
+                    xl={{ span: 18, order: 1 }}
+                    xxl={{ span: 20, order: 1 }}
+                >
+                    <Form.Item name="text" style={{ margin: 0 }}>
+                        <Input.TextArea
+                            size="large"
+                            maxLength={MAX_MESSAGE_LENGTH}
+                            placeholder="Message your friends"
+                            autoSize={{ minRows: 0, maxRows: 5 }}
+                        />
+                    </Form.Item>
+                </Col>
 
-                <Form.Item>
-                    <Button
-                        type="primary"
-                        style={{ fontWeight: "bold" }}
-                        icon={< SendOutlined />}
-                        htmlType="submit"
-                    >
-                        Send
-                    </Button>
-                </Form.Item>
-            </Space >
+                <Col
+                    xs={{ span: 10, order: 2 }}
+                    sm={{ span: 8, order: 2 }}
+                    md={{ span: 8, order: 2 }}
+                    lg={{ span: 8, order: 2 }}
+                    xl={{ span: 6, order: 2 }}
+                    xxl={{ span: 4, order: 2 }}
+                >
+                    <Form.Item style={{ margin: 0 }}>
+                        <Button
+                            size="large"
+                            type="primary"
+                            style={{ fontWeight: "bold" }}
+                            icon={< SendOutlined />}
+                            htmlType="submit"
+                        >
+                            Send
+                        </Button>
+                    </Form.Item>
+                </Col>
+            </Row>
         </Form>
     )
 }

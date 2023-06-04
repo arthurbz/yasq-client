@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { socket } from "../../plugins/SocketInstance"
+import { List, Row } from "antd"
 
 // Types
 import { TextMessage, Action } from "../../types/Action"
@@ -35,40 +36,45 @@ function ChatHistory() {
         }
     }, [])
 
+    const getActionComponent = (message: Action<TextMessage | RoomAction>, index: number) => {
+        switch (message.content.type) {
+            case "textMessage":
+                return <ChatMessage key={index} textMessage={message.content} date={message.date} />
+            case "songAdded":
+                return <SongAdded key={index} songAdded={message.content} />
+            case "userJoined":
+                return <UserJoined key={index} userJoined={message.content} />
+            case "stateChanged":
+                return <StateChanged key={index} stateChanged={message.content} />
+            case "changeSong":
+                return <ChangeSong key={index} changeSong={message.content} />
+        }
+    }
+
+    const renderItem = (message: Action<TextMessage | RoomAction>, index: number) => {
+        const component = getActionComponent(message, index)
+
+        if (!component)
+            return
+
+        if (message.content.type == "textMessage")
+            return <Row style={{ margin: 16 }}>{component}</Row>
+
+        return (
+            <Row style={{ display: "flex", justifyContent: "center", margin: 16 }}>
+                {component}
+            </Row>
+        )
+
+    }
+
     return (
-        <div>
-            Chat History
-            {
-                messageHistory.map((message, index) => {
-                    if (message.content.type == "textMessage")
-                        return <ChatMessage
-                            key={index}
-                            textMessage={message.content}
-                            date={message.date}
-                        />
-                    if (message.content.type == "songAdded")
-                        return <SongAdded
-                            key={index}
-                            songAdded={message.content}
-                        />
-                    if (message.content.type == "userJoined")
-                        return <UserJoined
-                            key={index}
-                            userJoined={message.content}
-                        />
-                    if (message.content.type == "stateChanged")
-                        return <StateChanged
-                            key={index}
-                            stateChanged={message.content}
-                        />
-                    if (message.content.type == "changeSong")
-                        return <ChangeSong
-                            key={index}
-                            changeSong={message.content}
-                        />
-                })
-            }
-        </div>
+        <List
+            locale={{ emptyText: "Nobody said anything yet." }}
+            dataSource={messageHistory}
+            renderItem={renderItem}
+            style={{ maxHeight: 500, overflowY: "auto" }}
+        />
     )
 }
 
