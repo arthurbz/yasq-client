@@ -86,19 +86,23 @@ function Home() {
     }
 
     return (
-        <Layout style={{ margin: 16 }}>
-            <Row style={{ alignItems: "center", gap: 16, marginLeft: 32, marginTop: 32 }}>
-                <Image
-                    src={YasqLogo}
-                    preview={false}
-                    style={{ maxWidth: 128 }}
-                />
-                <Title style={{ margin: 0, fontSize: "7em", fontWeight: 900 }}>
-                    YASQ
-                </Title>
+        <Layout style={{ padding: 64 }}>
+            <Row align="middle">
+                <Col>
+                    <Image
+                        src={YasqLogo}
+                        preview={false}
+                        style={{ maxWidth: 128 }}
+                    />
+                </Col>
+                <Col>
+                    <Title style={{ margin: 0, marginLeft: 16, fontSize: "5.8em", fontWeight: 900 }}>
+                        YASQ
+                    </Title>
+                </Col>
             </Row>
 
-            <Col>
+            <Col style={{ marginTop: 32 }}>
                 <Title level={2} style={{ margin: 0, fontWeight: 800 }}>
                     Experience music with friends.
                 </Title>
