@@ -16,11 +16,8 @@ import { getUserId, setUserId } from "../utils/StorageUtils"
 // Components
 import SearchBar from "../components/search/SearchBar"
 import SongList from "../components/song/SongList"
-import UserList from "../components/user/UserList"
 import UserProfileCard from "../components/user/UserProfileCard"
 import GlobalMusicPlayer from "../components/players/GlobalMusicPlayer"
-import ChatInput from "../components/chat/ChatInput"
-import ChatHistory from "../components/chat/ChatHistory"
 
 // Types
 import { Room } from "../types/Room"
@@ -34,6 +31,7 @@ import GlobalDataContext from "../contexts/GlobalDataContext"
 import dayjs from "dayjs"
 import { Action } from "../types/Action"
 import { UserJoined } from "../types/RoomAction"
+import ChatRoom from "../components/chat/ChatRoom"
 
 function Room() {
     const { room, setRoom, user, setUser, participation, setParticipation, setGlobalLoading } = useContext(GlobalDataContext)
@@ -168,8 +166,12 @@ function Room() {
 
     return (
         <Layout>
-            <Content style={{ overflow: "hidden" }}>
-                <Row align="middle" gutter={[32, 16]} style={{ padding: 32 }}>
+            <Content style={{ overflow: "hidden", display: "flex", flexDirection: "column", height: "100%" }}>
+                <Row
+                    align="middle"
+                    gutter={[32, 16]}
+                    style={{ padding: 32 }}
+                >
                     <Col
                         xs={{ span: 6, order: 1 }}
                         sm={{ span: 15, order: 1 }}
@@ -245,17 +247,35 @@ function Room() {
                     </Col>
                 </Row>
 
-                <Row style={{ height: 500 }}>
-                    <SongList roomId={roomId} />
+                <Row
+                    gutter={[32, 32]}
+                    style={{ padding: "0px 32px", flex: 1 }}
+                >
+                    <Col
+                        xs={{ span: 24, order: 2 }}
+                        sm={{ span: 24, order: 2 }}
+                        md={{ span: 12, order: 1 }}
+                        lg={{ span: 8, order: 1 }}
+                        xl={{ span: 6, order: 1 }}
+                        xxl={{ span: 6, order: 1 }}
+                    >
+                        <SongList roomId={roomId} />
+                    </Col>
 
-                    <UserList roomId={roomId} />
-
-                    <ChatHistory />
-                    <ChatInput />
+                    <Col
+                        xs={{ span: 24, order: 1 }}
+                        sm={{ span: 24, order: 1 }}
+                        md={{ span: 12, order: 2 }}
+                        lg={{ span: 16, order: 2 }}
+                        xl={{ span: 12, order: 2 }}
+                        xxl={{ span: 12, order: 2 }}
+                    >
+                        <ChatRoom roomId={roomId} />
+                    </Col>
                 </Row>
             </Content>
 
-            <Footer style={{ padding: 0, position: "sticky", bottom: 0 }}>
+            <Footer style={{ padding: 0, bottom: 0 }}>
                 <GlobalMusicPlayer />
             </Footer>
         </Layout>

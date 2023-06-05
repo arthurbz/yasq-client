@@ -16,7 +16,7 @@ function ChatRoom({ roomId }: ChatRoomProps) {
                 <UserList roomId={roomId} />
             </Col>
 
-            <Col style={{ minHeight: 300 }}>
+            <Col>
                 <ChatHistory />
             </Col>
 

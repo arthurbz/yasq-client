@@ -65,7 +65,6 @@ function ChatHistory() {
                 {component}
             </Row>
         )
-
     }
 
     return (
@@ -73,7 +72,7 @@ function ChatHistory() {
             locale={{ emptyText: "Nobody said anything yet." }}
             dataSource={messageHistory}
             renderItem={renderItem}
-            style={{ maxHeight: 500, overflowY: "auto" }}
+            style={{ height: "100%", overflowY: "auto", width: "100%" }}
         />
     )
 }

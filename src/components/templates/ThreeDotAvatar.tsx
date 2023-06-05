@@ -6,15 +6,15 @@ function ThreeDotsAvatar() {
             style={{
                 width: 46,
                 height: 46,
-                background: "#61dcc9",
+                background: "#000",
                 borderRadius: "50%",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
                 fontWeight: "bolder",
                 fontSize: 42,
-                color: "black",
-                boxShadow: "0px 0px 1px #61dcc9",
+                color: "#FFF",
+                boxShadow: "0px 0px 3px #F7F7F7",
                 userSelect: "none",
                 marginLeft: -24
             }}
