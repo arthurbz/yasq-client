@@ -52,7 +52,7 @@ function SongList({ roomId }: SongListProps) {
             locale={{ emptyText: "The playlist still empty." }}
             dataSource={songs}
             renderItem={renderItem}
-            style={{ height: "100%", overflowY: "auto", width: "100%" }}
+            style={{ minHeight: "0px !important", height: "100% !important", overflowY: "scroll", width: "100%" }}
         />
     )
 }

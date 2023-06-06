@@ -16,9 +16,7 @@ function ChatRoom({ roomId }: ChatRoomProps) {
                 <UserList roomId={roomId} />
             </Col>
 
-            <Col>
-                <ChatHistory />
-            </Col>
+            <ChatHistory />
 
             <Col span={24}>
                 <ChatInput />

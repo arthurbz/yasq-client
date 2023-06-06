@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react"
 import { LogoutOutlined, ShareAltOutlined } from "@ant-design/icons"
 import { App, Button, Layout, Popconfirm, Row, Col, Image, Typography, Tooltip } from "antd"
-const { Content, Footer } = Layout
+const { Header, Content, Footer } = Layout
 import { useParams, useNavigate } from "react-router-dom"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { AxiosError } from "axios"
@@ -166,11 +166,11 @@ function Room() {
 
     return (
         <Layout>
-            <Content style={{ overflow: "hidden", display: "flex", flexDirection: "column", height: "100%" }}>
+            <Header style={{ background: "#070707", padding: 32, height: "auto" }}>
                 <Row
+                    gutter={[32, 32]}
                     align="middle"
-                    gutter={[32, 16]}
-                    style={{ padding: 32 }}
+                    style={{ display: "flex", alignItems: "center" }}
                 >
                     <Col
                         xs={{ span: 6, order: 1 }}
@@ -200,6 +200,7 @@ function Room() {
                         sm={{ span: 24, order: 3 }}
                         md={{ span: 12, order: 2 }}
                         lg={{ span: 12, order: 2 }}
+                        style={{ display: "flex", alignItems: "center" }}
                     >
                         <SearchBar roomId={roomId} />
                     </Col>
@@ -247,6 +248,9 @@ function Room() {
                     </Col>
                 </Row>
 
+            </Header>
+
+            <Content style={{ overflowX: "hidden", display: "flex", flexDirection: "column" }}>
                 <Row
                     gutter={[32, 32]}
                     style={{ padding: "0px 32px", flex: 1 }}
@@ -275,7 +279,7 @@ function Room() {
                 </Row>
             </Content>
 
-            <Footer style={{ padding: 0, bottom: 0 }}>
+            <Footer style={{ padding: 32, margin: 0 }}>
                 <GlobalMusicPlayer />
             </Footer>
         </Layout>

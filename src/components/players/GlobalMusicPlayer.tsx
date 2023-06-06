@@ -135,14 +135,13 @@ function GlobalMusicPlayer() {
             <Row
                 style={{
                     width: "100%",
-                    padding: 16,
+                    padding: 32,
                     borderRadius: 8,
                     borderWidth: 2,
                     borderStyle: "solid",
                     borderColor: theme.token?.colorPrimary
                 }}
                 align="middle"
-                gutter={32}
             >
                 {buildPlayer && <YouTubePlayer />}
 
