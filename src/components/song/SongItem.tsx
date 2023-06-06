@@ -1,9 +1,15 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { DeleteOutlined } from "@ant-design/icons"
-import { Button, Row, Col, Typography } from "antd"
+import { Button, Row, Col, Typography, App } from "antd"
+import { useQueryClient, useMutation } from "@tanstack/react-query"
+import { AxiosError } from "axios"
+
 import { Song } from "../../types/Song"
 import AlbumCover from "./AlbumCover"
 import "./SongItemStyles.css"
+import { ErrorResponseData } from "../../types/ErrorResponseData"
+import { axios } from "../../plugins/AxiosInstance"
+import GlobalDataContext from "../../contexts/GlobalDataContext"
 
 interface SongProps {
     song: Song
@@ -11,8 +17,28 @@ interface SongProps {
 }
 
 function SongItem({ song, isPlaying }: SongProps) {
+    const { notification } = App.useApp()
+    const { room } = useContext(GlobalDataContext)
+    const queryClient = useQueryClient()
     const [hovering, setHovering] = useState(false)
     const { name, artist, thumbnail } = song
+
+    const { mutate: mutateRemoveSong } = useMutation<unknown, AxiosError<ErrorResponseData, any>>({
+        mutationKey: ["song", "remove", song.id],
+        mutationFn: async () => await axios.delete(`/song/remove/${song?.id}`).then(response => response.data),
+        onSuccess: () => {
+            queryClient.invalidateQueries(["song", "find", "room", room?.id])
+            queryClient.setQueryData(
+                ["song", "find", "room", room?.id],
+                (oldData: Song[] | undefined) => {
+                    return oldData?.filter(s => s.id != song.id)
+                }
+            )
+        },
+        onError: () => {
+            notification.error({ message: "We are sorry, there was an error removing this song." })
+        }
+    })
 
     return (
         <Row
@@ -59,6 +85,7 @@ function SongItem({ song, isPlaying }: SongProps) {
                         type="link"
                         danger
                         icon={<DeleteOutlined />}
+                        onClick={() => mutateRemoveSong()}
                     />
                 </Col>
                 : null
