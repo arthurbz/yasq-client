@@ -1,4 +1,4 @@
-import { Card, Col } from "antd"
+import { Col } from "antd"
 
 // Components
 import UserList from "../user/UserList"
@@ -11,17 +11,26 @@ interface ChatRoomProps {
 
 function ChatRoom({ roomId }: ChatRoomProps) {
     return (
-        <Card bodyStyle={{ backgroundColor: "#070707", borderRadius: 8 }}>
-            <Col style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Col
+            style={{
+                border: "1px solid #494949",
+                display: "flex",
+                flexDirection: "column",
+                backgroundColor: "#070707",
+                borderRadius: 8,
+                height: "100%",
+                width: "100%",
+                overflow: "auto"
+            }}
+        >
+            <div style={{ display: "flex", justifyContent: "flex-end", padding: 16 }}>
                 <UserList roomId={roomId} />
-            </Col>
+            </div>
 
             <ChatHistory />
 
-            <Col span={24}>
-                <ChatInput />
-            </Col>
-        </Card>
+            <ChatInput />
+        </Col>
     )
 }
 

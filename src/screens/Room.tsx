@@ -165,10 +165,9 @@ function Room() {
     }
 
     return (
-        <Layout>
+        <Layout style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
             <Header style={{ background: "#070707", padding: 32, height: "auto" }}>
                 <Row
-                    gutter={[32, 32]}
                     align="middle"
                     style={{ display: "flex", alignItems: "center" }}
                 >
@@ -178,7 +177,7 @@ function Room() {
                         md={{ span: 6, order: 1 }}
                         lg={{ span: 6, order: 1 }}
                     >
-                        <Row justify="start" align="middle" gutter={16}>
+                        <Row justify="start" align="middle">
                             <Col xs={24} sm={4} md={6} lg={6} xl={6} xxl={4}>
                                 <Image
                                     src={YasqLogo}
@@ -188,7 +187,7 @@ function Room() {
                             </Col>
 
                             <Col xs={0} sm={20} md={18} lg={18} xl={18} xxl={20} style={{ textAlign: "start" }}>
-                                <Typography.Title ellipsis style={{ margin: 0, marginRight: 16 }}>
+                                <Typography.Title ellipsis style={{ margin: 0 }}>
                                     {room?.name}
                                 </Typography.Title>
                             </Col>
@@ -213,7 +212,7 @@ function Room() {
                         xl={{ span: 3, order: 3, offset: 3 }}
                         xxl={{ span: 3, order: 3, offset: 3 }}
                     >
-                        <Row align="middle" justify="end" gutter={16}>
+                        <Row align="middle" justify="end">
                             <Col span={8}>
                                 <UserProfileCard user={user} />
                             </Col>
@@ -250,10 +249,10 @@ function Room() {
 
             </Header>
 
-            <Content style={{ overflowX: "hidden", display: "flex", flexDirection: "column" }}>
+            <Content style={{ overflowX: "hidden", display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
                 <Row
-                    gutter={[32, 32]}
-                    style={{ padding: "0px 32px", flex: 1 }}
+                    gutter={{ xs: 0, sm: 32 }}
+                    style={{ padding: "0px 32px", height: "100%", width: "100%" }}
                 >
                     <Col
                         xs={{ span: 24, order: 2 }}
@@ -262,6 +261,7 @@ function Room() {
                         lg={{ span: 8, order: 1 }}
                         xl={{ span: 6, order: 1 }}
                         xxl={{ span: 6, order: 1 }}
+                        style={{ height: "100%" }}
                     >
                         <SongList roomId={roomId} />
                     </Col>
@@ -273,6 +273,7 @@ function Room() {
                         lg={{ span: 16, order: 2 }}
                         xl={{ span: 12, order: 2 }}
                         xxl={{ span: 12, order: 2 }}
+                        style={{ height: "100%" }}
                     >
                         <ChatRoom roomId={roomId} />
                     </Col>

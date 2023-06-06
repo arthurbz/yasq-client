@@ -72,7 +72,7 @@ function ChatHistory() {
             locale={{ emptyText: "Nobody said anything yet." }}
             dataSource={messageHistory}
             renderItem={renderItem}
-            style={{ height: "100%", overflow: "auto", width: "100%" }}
+            style={{ height: "100%", width: "100%", overflow: "auto" }}
         />
     )
 }

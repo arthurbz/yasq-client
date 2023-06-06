@@ -39,7 +39,7 @@ function ChatInput() {
 
     return (
         <Form form={form} onFinish={sendMessage} onKeyDown={onKeyDown}>
-            <Row gutter={16} align="bottom">
+            <Row align="bottom" style={{ padding: 32 }}>
                 <Col
                     xs={{ span: 14, order: 1 }}
                     sm={{ span: 16, order: 1 }}
@@ -70,7 +70,7 @@ function ChatInput() {
                         <Button
                             size="large"
                             type="primary"
-                            style={{ fontWeight: "bold" }}
+                            style={{ fontWeight: "bold", marginLeft: 32 }}
                             icon={< SendOutlined />}
                             htmlType="submit"
                         >
