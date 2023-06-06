@@ -19,6 +19,8 @@ import { RoomState } from "../../types/Room"
 import { StateChanged } from "../../types/RoomAction"
 import { Action } from "../../types/Action"
 
+import { theme } from "../../themes/AppThemes"
+
 function GlobalMusicPlayer() {
     const { notification } = App.useApp()
     const { room, user, song, setSong } = useContext(GlobalDataContext)
@@ -133,38 +135,64 @@ function GlobalMusicPlayer() {
             <Row
                 style={{
                     width: "100%",
-                    borderRadius: 8,
-                    overflow: "hidden",
                     padding: 16,
+                    borderRadius: 8,
+                    borderWidth: 2,
+                    borderStyle: "solid",
+                    borderColor: theme.token?.colorPrimary
                 }}
+                align="middle"
                 gutter={32}
             >
                 {buildPlayer && <YouTubePlayer />}
 
-                <Col span={4}>
-                    <AlbumCover
-                        thumbnail={song?.thumbnail}
-                        name={song?.name}
-                        height={256}
-                        width={256}
-                    />
-                </Col>
-
-                <Col>
-                    <Row style={{ marginTop: 16 }}>
+                <Col
+                    xs={{ span: 12, order: 1 }}
+                    sm={{ span: 12, order: 1 }}
+                    md={{ span: 12, order: 1 }}
+                    lg={{ span: 4, order: 1 }}
+                    xl={{ span: 4, order: 1 }}
+                    xxl={{ span: 4, order: 1 }}
+                    style={{ padding: 0 }}
+                >
+                    <Row gutter={16} style={{ display: "flex" }} wrap={false}>
                         <Col>
-                            <Typography.Title level={3} ellipsis style={{ margin: 0, fontWeight: "bolder" }}>
-                                {song?.name}
-                            </Typography.Title>
+                            <AlbumCover
+                                thumbnail={song?.thumbnail}
+                                name={song?.name}
+                                height={96}
+                                width={96}
+                            />
+                        </Col>
 
-                            <Typography.Title level={4} ellipsis style={{ margin: 0, color: "grey" }}>
+                        <Col>
+                            <Typography.Text ellipsis style={{ margin: 0, fontWeight: "bolder" }}>
+                                {song?.name}
+                            </Typography.Text>
+
+                            <Typography.Text ellipsis style={{ margin: 0, color: "grey" }}>
                                 {song?.artist}
-                            </Typography.Title>
+                            </Typography.Text>
                         </Col>
                     </Row>
+                </Col>
 
-                    <Row gutter={16} style={{ alignItems: "center" }}>
-                        <Col>
+                <Col
+                    xs={{ span: 24, order: 3 }}
+                    sm={{ span: 24, order: 3 }}
+                    md={{ span: 24, order: 3 }}
+                    lg={{ span: 14, order: 2 }}
+                    xl={{ span: 14, order: 2 }}
+                    xxl={{ span: 16, order: 2 }}
+                >
+                    <Row gutter={16} align="middle" justify="center">
+                        <Col
+                            xs={{ span: 6, order: 1 }}
+                            sm={{ span: 6, order: 1 }}
+                            md={{ span: 4, order: 1 }}
+                            lg={{ span: 3, order: 1 }}
+                            style={{ display: "flex", justifyContent: "center" }}
+                        >
                             <Tooltip title="Previous">
                                 <Button
                                     type="text"
@@ -178,7 +206,13 @@ function GlobalMusicPlayer() {
                             </Tooltip>
                         </Col>
 
-                        <Col>
+                        <Col
+                            xs={{ span: 6, order: 2 }}
+                            sm={{ span: 6, order: 2 }}
+                            md={{ span: 4, order: 2 }}
+                            lg={{ span: 3, order: 2 }}
+                            style={{ display: "flex", justifyContent: "center" }}
+                        >
                             <Tooltip title={isPlaying ? "Pause" : "Play"}>
                                 <Button
                                     type="text"
@@ -195,7 +229,13 @@ function GlobalMusicPlayer() {
                             </Tooltip>
                         </Col>
 
-                        <Col>
+                        <Col
+                            xs={{ span: 6, order: 3 }}
+                            sm={{ span: 6, order: 3 }}
+                            md={{ span: 4, order: 3 }}
+                            lg={{ span: 3, order: 3 }}
+                            style={{ display: "flex", justifyContent: "center" }}
+                        >
                             <Tooltip title="Next">
                                 <Button
                                     type="text"
@@ -209,7 +249,13 @@ function GlobalMusicPlayer() {
                             </Tooltip>
                         </Col>
 
-                        <Col>
+                        <Col
+                            xs={{ span: 6, order: 4 }}
+                            sm={{ span: 6, order: 4 }}
+                            md={{ span: 4, order: 4 }}
+                            lg={{ span: 3, order: 4 }}
+                            style={{ display: "flex", justifyContent: "center" }}
+                        >
                             <Tooltip title="Refresh player" mouseEnterDelay={0.7}>
                                 <Button
                                     type="text"
@@ -225,11 +271,18 @@ function GlobalMusicPlayer() {
                     </Row>
                 </Col>
 
-                <Col span={4} style={{ alignSelf: "center" }}>
+                <Col
+                    xs={{ span: 12, order: 2 }}
+                    sm={{ span: 12, order: 2 }}
+                    md={{ span: 12, order: 2 }}
+                    lg={{ span: 6, order: 3 }}
+                    xl={{ span: 6, order: 3 }}
+                    xxl={{ span: 4, order: 3 }}
+                >
                     <VolumeSlider />
                 </Col>
-            </Row>
-        </GlobalPlayerContext.Provider>
+            </Row >
+        </GlobalPlayerContext.Provider >
     )
 }
 
@@ -237,6 +290,7 @@ const iconButtonStyles: CSSProperties = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    textAlign: "center",
     height: 64,
     width: 64
 }
