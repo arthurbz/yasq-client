@@ -40,7 +40,7 @@ function UserList({ roomId }: UserListProps) {
             <UserItem
                 key={participation.id}
                 user={participation.user}
-                isOwner={participation.isOwner}
+                participation={participation}
             />
         )
     }
